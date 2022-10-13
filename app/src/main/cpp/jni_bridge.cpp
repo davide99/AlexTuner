@@ -11,7 +11,7 @@ const char *TAG = "jni_bridge:: %s";
 static AudioRecorder *audioRecorder = nullptr;
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_create(
+Java_com_davide99_alextuner_AudioRecorder_create(
         JNIEnv *env,
         jclass
 ) {
@@ -24,7 +24,7 @@ Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_create(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_delete(
+Java_com_davide99_alextuner_AudioRecorder_delete(
         JNIEnv *env,
         jclass
 ) {
@@ -35,7 +35,7 @@ Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_delete(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_startRecording(
+Java_com_davide99_alextuner_AudioRecorder_startRecording(
         JNIEnv *env,
         jclass,
         jstring fullPathToFile
@@ -51,7 +51,7 @@ Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_startRecordin
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_tk_atna_audiorecorder_data_datasource_AudioRecorderDataSource_stopRecording(
+Java_com_davide99_alextuner_AudioRecorder_stopRecording(
         JNIEnv *env,
         jclass
 ) {

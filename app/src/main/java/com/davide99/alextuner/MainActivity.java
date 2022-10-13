@@ -8,10 +8,6 @@ import android.widget.TextView;
 import com.davide99.alextuner.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    static {
-        System.loadLibrary("alextuner");
-    }
-
     private ActivityMainBinding binding;
 
     @Override
@@ -23,12 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         TextView tv = binding.sampleText;
-        tv.setText(Float.toString(floatFromJNI()));
+        tv.setText("");
     }
-
-    /**
-     * A native method that is implemented by the 'alextuner' native library,
-     * which is packaged with this application.
-     */
-    public native float floatFromJNI();
 }
