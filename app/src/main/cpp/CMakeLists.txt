@@ -5,15 +5,12 @@ project("alextuner")
 add_library(
         alextuner
         SHARED
-        AudioRecorder.cpp
+        AudioAnalyzer.cpp
         jni_bridge.cpp)
 
 find_library(log-lib log)
 
-find_package(oboe REQUIRED CONFIG)
-
 target_link_libraries(
         alextuner
         ${log-lib}
-        oboe::oboe
-        )
+)

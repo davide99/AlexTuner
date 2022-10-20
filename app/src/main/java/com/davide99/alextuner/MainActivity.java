@@ -17,8 +17,10 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Example of a call to a native method
+        AudioAnalyzer.init();
+        AudioAnalyzer.feedData(new short[]{10, 20, 30, 40});
+
         TextView tv = binding.sampleText;
-        tv.setText("");
+        tv.setText(Float.toString(AudioAnalyzer.computeFreq()));
     }
 }
