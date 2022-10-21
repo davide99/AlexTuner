@@ -11,6 +11,9 @@ private:
     std::unique_ptr<float[]> window;
     std::unique_ptr<float[]> fft_input;
     fftwf_plan fft_plan;
+    std::unique_ptr<fftwf_complex[]> fft_out;
+    std::unique_ptr<float[]> fft_out_magnitude;
+    float freq;
 
 
 public:

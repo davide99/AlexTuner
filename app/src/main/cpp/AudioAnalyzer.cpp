@@ -1,5 +1,6 @@
 #include "AudioAnalyzer.h"
 #include <cmath>
+#include <algorithm>
 
 constexpr auto CHUNK_SIZE = 1024; //Number of samples
 constexpr auto BUFFER_TIMES = 50;
@@ -14,7 +15,10 @@ AudioAnalyzer::AudioAnalyzer() :
         buffer(BUFFER_SIZE),
         window(std::unique_ptr<float[]>(new float[BUFFER_SIZE])),
         //fft_input allocated only once to be faster
-        fft_input(std::unique_ptr<float[]>(new float[FFT_INPUT_SIZE])) {
+        fft_input(std::unique_ptr<float[]>(new float[FFT_INPUT_SIZE])),
+        fft_out(std::unique_ptr<fftwf_complex[]>(new fftwf_complex[FFT_OUTPUT_SIZE])),
+        fft_out_magnitude(std::unique_ptr<float[]>(new float[FFT_OUTPUT_SIZE])),
+        freq(0) {
 
     //Initially fill circular buffer with zeros
     for (int i = 0; i < BUFFER_SIZE; i++)
@@ -30,11 +34,11 @@ AudioAnalyzer::AudioAnalyzer() :
         fft_input[i] = 0;
 
     //Inizialize fftw plan
-    fft_plan = fftwf_plan_dft_r2c_1d(BUFFER_SIZE, fft_input.get(), nullptr, 0);
+    fft_plan = fftwf_plan_dft_r2c_1d(BUFFER_SIZE, fft_input.get(), fft_out.get(), FFTW_ESTIMATE);
 }
 
 AudioAnalyzer::~AudioAnalyzer() {
-
+    fftwf_destroy_plan(fft_plan);
 }
 
 /**
@@ -52,10 +56,25 @@ void AudioAnalyzer::feed_data(short *data, int length) {
         fft_input[i] = (float) buffer.get(i) * window[i];
 
     //Compute real fft on fft_input
+    fftwf_execute(fft_plan);
+
+    //Compute the magnitude
+    std::transform(fft_out.get(), fft_out.get() + FFT_OUTPUT_SIZE, fft_out_magnitude.get(),
+                   [](const fftwf_complex &i) -> float {
+                       return std::sqrtf(i[0] * i[0] + i[1] * i[1]);
+                   });
+
+    float max = 0;
+    for (int i = 0; i < FFT_OUTPUT_SIZE; i++) {
+        if (fft_out_magnitude[i] > max)
+            max = fft_out_magnitude[i];
+    }
+
+    freq = max;
 }
 
 float AudioAnalyzer::compute_freq() {
-    return rand();
+    return freq;
 }
 
 int AudioAnalyzer::get_sample_rate() {
