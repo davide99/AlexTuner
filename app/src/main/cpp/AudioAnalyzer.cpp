@@ -4,6 +4,7 @@
 constexpr auto CHUNK_SIZE = 1024; //Number of samples
 constexpr auto BUFFER_TIMES = 50;
 constexpr auto BUFFER_SIZE = CHUNK_SIZE * BUFFER_TIMES;
+constexpr auto SAMPLE_RATE = 48000;
 
 
 AudioAnalyzer::AudioAnalyzer() :
@@ -36,4 +37,12 @@ void AudioAnalyzer::feed_data(short *data, int length) {
 
 float AudioAnalyzer::compute_freq() {
     return rand();
+}
+
+int AudioAnalyzer::get_sample_rate() {
+    return SAMPLE_RATE;
+}
+
+int AudioAnalyzer::get_chunk_size() {
+    return CHUNK_SIZE;
 }

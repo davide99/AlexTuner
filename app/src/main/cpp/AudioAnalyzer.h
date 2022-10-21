@@ -18,6 +18,10 @@ public:
     void feed_data(short *data, int length);
 
     float compute_freq();
+
+    static int get_sample_rate();
+
+    static int get_chunk_size();
 };
 
 #endif //AUDIOANALYZER_H

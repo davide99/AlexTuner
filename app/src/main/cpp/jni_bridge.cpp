@@ -42,3 +42,13 @@ Java_com_davide99_alextuner_AudioAnalyzer_computeFreq(JNIEnv *env, jclass) {
 
     return audioRecorder->compute_freq();
 }
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_davide99_alextuner_AudioAnalyzer_getSampleRate(JNIEnv *env, jclass) {
+    return AudioAnalyzer::get_sample_rate();
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_davide99_alextuner_AudioAnalyzer_getChunkSize(JNIEnv *env, jclass) {
+    return AudioAnalyzer::get_chunk_size();
+}
