@@ -23,7 +23,8 @@ AudioAnalyzer::AudioAnalyzer() :
     for (int i = 0; i < BUFFER_SIZE; ++i)
         window[i] = 0.5f - 0.5f * cosf(2.0f * (float) M_PI * (float) i / (BUFFER_SIZE - 1));
 
-    //Zero-out the padding in fft_input (provare con memset)
+    //Zero-out the padding in fft_input
+    //TODO: provare con memset?
     for (int i = BUFFER_SIZE; i < FFT_INPUT_SIZE; i++)
         fft_input[i] = 0;
 }
