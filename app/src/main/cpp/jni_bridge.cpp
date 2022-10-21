@@ -36,11 +36,11 @@ Java_com_davide99_alextuner_AudioAnalyzer_feedData(
 }
 
 extern "C" JNIEXPORT jfloat JNICALL
-Java_com_davide99_alextuner_AudioAnalyzer_computeFreq(JNIEnv *env, jclass) {
+Java_com_davide99_alextuner_AudioAnalyzer_getFreq(JNIEnv *env, jclass) {
     if (audioRecorder == nullptr)
         return 0;
 
-    return audioRecorder->compute_freq();
+    return audioRecorder->get_freq();
 }
 
 extern "C" JNIEXPORT jint JNICALL

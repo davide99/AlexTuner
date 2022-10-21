@@ -22,7 +22,7 @@ public:
 
     void feed_data(short *data, int length);
 
-    float compute_freq();
+    float get_freq() const;
 
     static int get_sample_rate();
 

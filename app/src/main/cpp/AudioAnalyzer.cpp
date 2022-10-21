@@ -66,21 +66,19 @@ void AudioAnalyzer::feed_data(short *data, int length) {
 
     //TODO: HPS
 
-    //Ottengo frequenze
-    float freqs[FFT_OUTPUT_SIZE];
+    //Find the maximum magnitude position in the array
+    size_t pos_max = std::distance(
+            fft_out_magnitude.get(),
+            std::max_element(
+                    fft_out_magnitude.get(), fft_out_magnitude.get() + FFT_OUTPUT_SIZE
+            )
+    );
 
-    for (int i = 0; i < FFT_OUTPUT_SIZE; ++i) {
-        freqs[i] = 2 * (float) i * (float) SAMPLE_RATE / FFT_OUTPUT_SIZE;
-    }
-
-    int pos_max = std::distance(fft_out_magnitude.get(), std::max_element(fft_out_magnitude.get(),
-                                                                          fft_out_magnitude.get() +
-                                                                          FFT_OUTPUT_SIZE));
-
-    freq = freqs[pos_max];
+    //Compute corresponding frequency
+    freq = 2.0f * static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) / static_cast<float>(FFT_OUTPUT_SIZE);
 }
 
-float AudioAnalyzer::compute_freq() {
+float AudioAnalyzer::get_freq() const {
     return freq;
 }
 

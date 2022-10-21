@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             while (true) {
                 recorder.read(data, 0, data.length);
                 AudioAnalyzer.feedData(data);
-                Log.i("FREQ", Float.toString(AudioAnalyzer.computeFreq()));
+                Log.i("FREQ", Float.toString(AudioAnalyzer.getFreq()));
 
                 try {
                     Thread.sleep(100);
