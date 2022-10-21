@@ -26,7 +26,7 @@ AudioAnalyzer::AudioAnalyzer() :
 
     //Compute the hanning window
     for (int i = 0; i < BUFFER_SIZE; ++i)
-        window[i] = 0.5f - 0.5f * cosf(2.0f * (float) M_PI * (float) i / (BUFFER_SIZE - 1));
+        window[i] = 0.5f - 0.5f * std::cosf(2.0f * (float) M_PI * (float) i / (BUFFER_SIZE - 1));
 
     //Zero-out the padding in fft_input
     //TODO: provare con memset?
@@ -34,7 +34,7 @@ AudioAnalyzer::AudioAnalyzer() :
         fft_input[i] = 0;
 
     //Inizialize fftw plan
-    fft_plan = fftwf_plan_dft_r2c_1d(BUFFER_SIZE, fft_input.get(), fft_out.get(), FFTW_ESTIMATE);
+    fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_ESTIMATE);
 }
 
 AudioAnalyzer::~AudioAnalyzer() {
@@ -75,7 +75,7 @@ void AudioAnalyzer::feed_data(short *data, int length) {
     );
 
     //Compute corresponding frequency
-    freq = 2.0f * static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) / static_cast<float>(FFT_OUTPUT_SIZE);
+    freq = static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) / static_cast<float>(FFT_INPUT_SIZE);
 }
 
 float AudioAnalyzer::get_freq() const {
