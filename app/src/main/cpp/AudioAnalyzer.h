@@ -8,7 +8,7 @@ class AudioAnalyzer {
 private:
     CircularBuffer<std::int16_t> buffer;
     std::unique_ptr<float[]> window;
-
+    std::unique_ptr<float[]> fft_input;
 
 
 public:
