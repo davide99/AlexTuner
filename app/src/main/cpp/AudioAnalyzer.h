@@ -3,12 +3,14 @@
 
 #include "CircularBuffer.h"
 #include <memory>
+#include <fftw3.h>
 
 class AudioAnalyzer {
 private:
     CircularBuffer<std::int16_t> buffer;
     std::unique_ptr<float[]> window;
     std::unique_ptr<float[]> fft_input;
+    fftwf_plan fft_plan;
 
 
 public:

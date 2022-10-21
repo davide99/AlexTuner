@@ -7,6 +7,7 @@ constexpr auto BUFFER_SIZE = CHUNK_SIZE * BUFFER_TIMES;
 constexpr auto SAMPLE_RATE = 48000;
 constexpr auto ZERO_PADDING = 3; //times the buffer length
 constexpr auto FFT_INPUT_SIZE = BUFFER_SIZE * (1 + ZERO_PADDING);
+constexpr auto FFT_OUTPUT_SIZE = FFT_INPUT_SIZE / 2 + 1;
 
 
 AudioAnalyzer::AudioAnalyzer() :
@@ -27,6 +28,9 @@ AudioAnalyzer::AudioAnalyzer() :
     //TODO: provare con memset?
     for (int i = BUFFER_SIZE; i < FFT_INPUT_SIZE; i++)
         fft_input[i] = 0;
+
+    //Inizialize fftw plan
+    fft_plan = fftwf_plan_dft_r2c_1d(BUFFER_SIZE, fft_input.get(), nullptr, 0);
 }
 
 AudioAnalyzer::~AudioAnalyzer() {
@@ -46,6 +50,8 @@ void AudioAnalyzer::feed_data(short *data, int length) {
     //Multiply the window by the input
     for (int i = 0; i < BUFFER_SIZE; i++)
         fft_input[i] = (float) buffer.get(i) * window[i];
+
+    //Compute real fft on fft_input
 }
 
 float AudioAnalyzer::compute_freq() {
