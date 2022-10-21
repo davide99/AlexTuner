@@ -64,13 +64,20 @@ void AudioAnalyzer::feed_data(short *data, int length) {
                        return std::sqrtf(i[0] * i[0] + i[1] * i[1]);
                    });
 
-    float max = 0;
-    for (int i = 0; i < FFT_OUTPUT_SIZE; i++) {
-        if (fft_out_magnitude[i] > max)
-            max = fft_out_magnitude[i];
+    //TODO: HPS
+
+    //Ottengo frequenze
+    float freqs[FFT_OUTPUT_SIZE];
+
+    for (int i = 0; i < FFT_OUTPUT_SIZE; ++i) {
+        freqs[i] = 2 * (float) i * (float) SAMPLE_RATE / FFT_OUTPUT_SIZE;
     }
 
-    freq = max;
+    int pos_max = std::distance(fft_out_magnitude.get(), std::max_element(fft_out_magnitude.get(),
+                                                                          fft_out_magnitude.get() +
+                                                                          FFT_OUTPUT_SIZE));
+
+    freq = freqs[pos_max];
 }
 
 float AudioAnalyzer::compute_freq() {
