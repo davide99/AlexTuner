@@ -64,7 +64,12 @@ void AudioAnalyzer::feed_data(short *data, int length) {
                        return std::sqrtf(i[0] * i[0] + i[1] * i[1]);
                    });
 
-    //TODO: HPS
+    //HPS: mul
+
+    //Set magnitudes of al frequencies below 60Hz to zero
+    size_t above_60 = 60.0f * static_cast<float>(FFT_INPUT_SIZE) / static_cast<float>(SAMPLE_RATE);
+    for (int i = 0; i < above_60; i++)
+        fft_out_magnitude[i] = 0;
 
     //Find the maximum magnitude position in the array
     size_t pos_max = std::distance(
@@ -75,7 +80,8 @@ void AudioAnalyzer::feed_data(short *data, int length) {
     );
 
     //Compute corresponding frequency
-    freq = static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) / static_cast<float>(FFT_INPUT_SIZE);
+    freq = static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) /
+           static_cast<float>(FFT_INPUT_SIZE);
 }
 
 float AudioAnalyzer::get_freq() const {
