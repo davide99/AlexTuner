@@ -35,5 +35,5 @@ void AudioAnalyzer::feed_data(short *data, int length) {
 }
 
 float AudioAnalyzer::compute_freq() {
-    return 0;
+    return rand();
 }
