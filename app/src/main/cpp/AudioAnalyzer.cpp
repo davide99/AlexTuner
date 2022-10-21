@@ -9,6 +9,7 @@ constexpr auto SAMPLE_RATE = 48000;
 constexpr auto ZERO_PADDING = 3; //times the buffer length
 constexpr auto FFT_INPUT_SIZE = BUFFER_SIZE * (1 + ZERO_PADDING);
 constexpr auto FFT_OUTPUT_SIZE = FFT_INPUT_SIZE / 2 + 1;
+constexpr auto NUM_HPS = 3; //harmonic product spectrum
 
 
 AudioAnalyzer::AudioAnalyzer() :
@@ -18,6 +19,7 @@ AudioAnalyzer::AudioAnalyzer() :
         fft_input(std::unique_ptr<float[]>(new float[FFT_INPUT_SIZE])),
         fft_out(std::unique_ptr<fftwf_complex[]>(new fftwf_complex[FFT_OUTPUT_SIZE])),
         fft_out_magnitude(std::unique_ptr<float[]>(new float[FFT_OUTPUT_SIZE])),
+        fft_out_magnitude_copy(std::unique_ptr<float[]>(new float[FFT_OUTPUT_SIZE])),
         freq(0) {
 
     //Initially fill circular buffer with zeros
@@ -64,7 +66,18 @@ void AudioAnalyzer::feed_data(short *data, int length) {
                        return std::sqrtf(i[0] * i[0] + i[1] * i[1]);
                    });
 
-    //HPS: mul
+    //HPS: multiply data by itself with different scalings (Harmonic Product Spectrum)
+    std::copy(
+            fft_out_magnitude.get(), fft_out_magnitude.get() + FFT_OUTPUT_SIZE,
+            fft_out_magnitude_copy.get());
+
+    for (int i = 2; i <= NUM_HPS; i++) {
+        auto hps_len = static_cast<int>(std::ceil(FFT_OUTPUT_SIZE / static_cast<float>(i)));
+
+        for (int j = 0; j < hps_len; j++) {
+            fft_out_magnitude.get()[j] *= fft_out_magnitude_copy.get()[i * j];
+        }
+    }
 
     //Set magnitudes of al frequencies below 60Hz to zero
     size_t above_60 = 60.0f * static_cast<float>(FFT_INPUT_SIZE) / static_cast<float>(SAMPLE_RATE);

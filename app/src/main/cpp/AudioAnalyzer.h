@@ -13,6 +13,7 @@ private:
     fftwf_plan fft_plan;
     std::unique_ptr<fftwf_complex[]> fft_out;
     std::unique_ptr<float[]> fft_out_magnitude;
+    std::unique_ptr<float[]> fft_out_magnitude_copy;
     float freq;
 
 

@@ -70,11 +70,11 @@ public class MainActivity extends AppCompatActivity {
                 AudioAnalyzer.feedData(data);
                 Log.i("FREQ", Float.toString(AudioAnalyzer.getFreq()));
 
-                try {
+                /*try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
 
             //recorder.stop();
