@@ -68,22 +68,22 @@ public class MainActivity extends AppCompatActivity {
             while (true) {
                 recorder.read(data, 0, data.length);
                 AudioAnalyzer.feedData(data);
-                runOnUiThread(() -> gauge.setFrequency(AudioAnalyzer.getFreq()));
             }
 
             //recorder.stop();
         }).start();
 
-        /*new Thread(() -> {
+        new Thread(() -> {
             while (true) {
-                runOnUiThread(() -> tv.setText(Float.toString(AudioAnalyzer.getFreq())));
+                runOnUiThread(() -> runOnUiThread(() -> gauge.setFrequency(AudioAnalyzer.getFreq())));
+
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();*/
+        }).start();
     }
 
     @Override
