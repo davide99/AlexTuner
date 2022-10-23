@@ -1,8 +1,6 @@
 #include "AudioAnalyzer.h"
 #include <cmath>
 #include <algorithm>
-#include <android/log.h>
-#include <chrono>
 
 constexpr auto CHUNK_SIZE = 1024; //Number of samples
 constexpr auto BUFFER_TIMES = 50;
@@ -14,7 +12,6 @@ constexpr auto FFT_OUTPUT_SIZE = FFT_INPUT_SIZE / 2 + 1;
 constexpr auto NUM_HPS = 3; //harmonic product spectrum
 constexpr auto ABOVE_60 = static_cast<std::size_t>(60.0f * static_cast<float>(FFT_INPUT_SIZE) /
                                                    static_cast<float>(SAMPLE_RATE));
-
 
 AudioAnalyzer::AudioAnalyzer() :
         buffer(BUFFER_SIZE),
@@ -39,7 +36,9 @@ AudioAnalyzer::AudioAnalyzer() :
     for (int i = BUFFER_SIZE; i < FFT_INPUT_SIZE; i++)
         fft_input[i] = 0;
 
+    fftwf_init_threads();
     //Inizialize fftw plan
+    fftwf_plan_with_nthreads(4);
     fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_MEASURE | FFTW_DESTROY_INPUT);
 }
 
@@ -61,12 +60,8 @@ void AudioAnalyzer::feed_data(short *data, size_t length) {
     for (std::size_t i = 0; i < BUFFER_SIZE; ++i)
         fft_input[i] = static_cast<float>(buffer.get(i)) * window[i];
 
-    auto start = std::chrono::high_resolution_clock::now();
     //Compute real fft on fft_input
     fftwf_execute(fft_plan);
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::high_resolution_clock::now() - start);
-    __android_log_print(ANDROID_LOG_VERBOSE, "ALEX_time", "%lld", duration.count());
 
     //Compute the magnitude
     std::transform(fft_out.get(), fft_out.get() + FFT_OUTPUT_SIZE, fft_out_magnitude.get(),
@@ -98,7 +93,6 @@ void AudioAnalyzer::feed_data(short *data, size_t length) {
     //Compute corresponding frequency
     freq = static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) /
            static_cast<float>(FFT_INPUT_SIZE);
-
 }
 
 float AudioAnalyzer::get_freq() const {
