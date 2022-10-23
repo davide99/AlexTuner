@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         AudioAnalyzer.init();
 
-        TextView tv = binding.sampleText;
+        Gauge gauge = binding.gauge;
 
         new Thread(() -> {
             recorder.startRecording();
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             while (true) {
                 recorder.read(data, 0, data.length);
                 AudioAnalyzer.feedData(data);
-                runOnUiThread(() -> tv.setText(Float.toString(AudioAnalyzer.getFreq())));
+                runOnUiThread(() -> gauge.setFrequency(AudioAnalyzer.getFreq()));
             }
 
             //recorder.stop();
