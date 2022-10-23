@@ -2,15 +2,18 @@
 #include <cmath>
 #include <algorithm>
 #include <android/log.h>
+#include <chrono>
 
 constexpr auto CHUNK_SIZE = 1024; //Number of samples
 constexpr auto BUFFER_TIMES = 50;
 constexpr auto BUFFER_SIZE = CHUNK_SIZE * BUFFER_TIMES;
-constexpr auto SAMPLE_RATE = 48000;
+constexpr auto SAMPLE_RATE = 44100;
 constexpr auto ZERO_PADDING = 3; //times the buffer length
 constexpr auto FFT_INPUT_SIZE = BUFFER_SIZE * (1 + ZERO_PADDING);
 constexpr auto FFT_OUTPUT_SIZE = FFT_INPUT_SIZE / 2 + 1;
 constexpr auto NUM_HPS = 3; //harmonic product spectrum
+constexpr auto ABOVE_60 = static_cast<std::size_t>(60.0f * static_cast<float>(FFT_INPUT_SIZE) /
+                                                   static_cast<float>(SAMPLE_RATE));
 
 
 AudioAnalyzer::AudioAnalyzer() :
@@ -37,7 +40,7 @@ AudioAnalyzer::AudioAnalyzer() :
         fft_input[i] = 0;
 
     //Inizialize fftw plan
-    fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_MEASURE);
+    fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_MEASURE | FFTW_DESTROY_INPUT);
 }
 
 AudioAnalyzer::~AudioAnalyzer() {
@@ -49,17 +52,21 @@ AudioAnalyzer::~AudioAnalyzer() {
  * @param data array dei dati
  * @param length lunghezza array
  */
-void AudioAnalyzer::feed_data(short *data, int length) {
+void AudioAnalyzer::feed_data(short *data, size_t length) {
     //Append data to audio buffer
-    for (int i = 0; i < length; ++i)
+    for (std::size_t i = 0; i < length; ++i)
         buffer.enqueue(data[i]);
 
     //Multiply the window by the input
-    for (int i = 0; i < BUFFER_SIZE; ++i)
-        fft_input[i] = (float) buffer.get(i) * window[i];
+    for (std::size_t i = 0; i < BUFFER_SIZE; ++i)
+        fft_input[i] = static_cast<float>(buffer.get(i)) * window[i];
 
+    auto start = std::chrono::high_resolution_clock::now();
     //Compute real fft on fft_input
     fftwf_execute(fft_plan);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::high_resolution_clock::now() - start);
+    __android_log_print(ANDROID_LOG_VERBOSE, "ALEX_time", "%lld", duration.count());
 
     //Compute the magnitude
     std::transform(fft_out.get(), fft_out.get() + FFT_OUTPUT_SIZE, fft_out_magnitude.get(),
@@ -75,27 +82,23 @@ void AudioAnalyzer::feed_data(short *data, int length) {
     for (int i = 2; i <= NUM_HPS; i++) {
         auto hps_len = static_cast<int>(std::ceil(FFT_OUTPUT_SIZE / static_cast<float>(i)));
 
-        for (int j = 0; j < hps_len; j++) {
+        for (int j = 0; j < hps_len; j++)
             fft_out_magnitude.get()[j] *= fft_out_magnitude_copy.get()[i * j];
-        }
     }
 
-    //Set magnitudes of al frequencies below 60Hz to zero
-    size_t above_60 = 60.0f * static_cast<float>(FFT_INPUT_SIZE) / static_cast<float>(SAMPLE_RATE);
-    for (int i = 0; i < above_60; i++)
-        fft_out_magnitude[i] = 0;
-
-    //Find the maximum magnitude position in the array
-    size_t pos_max = std::distance(
-            fft_out_magnitude.get(),
-            std::max_element(
-                    fft_out_magnitude.get(), fft_out_magnitude.get() + FFT_OUTPUT_SIZE
-            )
-    );
+    std::size_t pos_max = 0;
+    float max = 0;
+    for (std::size_t i = ABOVE_60; i < FFT_OUTPUT_SIZE; i++) {
+        if (fft_out_magnitude.get()[i] > max) {
+            max = fft_out_magnitude.get()[i];
+            pos_max = i;
+        }
+    }
 
     //Compute corresponding frequency
     freq = static_cast<float>(pos_max) * static_cast<float>(SAMPLE_RATE) /
            static_cast<float>(FFT_INPUT_SIZE);
+
 }
 
 float AudioAnalyzer::get_freq() const {

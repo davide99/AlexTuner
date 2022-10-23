@@ -26,7 +26,7 @@ public:
         last = (last + 1) % max_size;
     }
 
-    T get(std::size_t pos) {
+    inline const T &get(const std::size_t &pos) {
         return buffer[(last + pos) % max_size];
     }
 };

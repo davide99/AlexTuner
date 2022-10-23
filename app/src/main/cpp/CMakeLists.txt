@@ -8,6 +8,7 @@ set(ENABLE_FLOAT ON)
 set(BUILD_SHARED_LIBS OFF)
 set(BUILD_TESTS OFF)
 set(DISABLE_FORTRAN ON)
+set(ENABLE_THREADS ON)
 add_subdirectory(fftw-3.3.10)
 
 add_library(

@@ -15,14 +15,14 @@ private:
     std::unique_ptr<fftwf_complex[]> fft_out;
     std::unique_ptr<float[]> fft_out_magnitude;
     std::unique_ptr<float[]> fft_out_magnitude_copy;
-    std::atomic<float> freq;
+    float freq;
 
 
 public:
     AudioAnalyzer();
     ~AudioAnalyzer();
 
-    void feed_data(short *data, int length);
+    void feed_data(short *data, size_t length);
 
     float get_freq() const;
 
