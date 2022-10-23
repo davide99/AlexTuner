@@ -19,6 +19,7 @@ public class Gauge extends View {
     private float angle;
     private String note;
     private String frequency;
+    private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
@@ -74,6 +75,11 @@ public class Gauge extends View {
 
         if (!new_freq.equals(this.frequency)) {
             this.frequency = new_freq;
+
+            int index = (int) ((Math.round(12.0 * Math.log(frequency / 440.0) / Math.log(2) + 69.0)) % 12);
+            if (index >= 0 && index < NOTE_NAMES.length)
+                this.note = NOTE_NAMES[index];
+
             invalidate();
         }
     }
