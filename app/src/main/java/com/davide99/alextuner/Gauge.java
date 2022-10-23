@@ -21,6 +21,8 @@ public class Gauge extends View {
     private String frequency;
     private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
+    private static final float C0 = (float) (440.0f * Math.pow(2, -4.75));
+
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
         int textColor = Color.WHITE;
@@ -77,8 +79,9 @@ public class Gauge extends View {
             this.frequency = new_freq;
 
             int index = (int) ((Math.round(12.0 * Math.log(frequency / 440.0) / Math.log(2) + 69.0)) % 12);
+            int octave = (int) (Math.round(12.0 * Math.log(frequency / C0) / Math.log(2))) / 12;
             if (index >= 0 && index < NOTE_NAMES.length)
-                this.note = NOTE_NAMES[index];
+                this.note = NOTE_NAMES[index] + octave;
 
             invalidate();
         }
