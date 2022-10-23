@@ -13,6 +13,10 @@ import android.os.Bundle;
 
 import com.davide99.alextuner.databinding.ActivityMainBinding;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private AudioRecord recorder;
@@ -73,17 +77,11 @@ public class MainActivity extends AppCompatActivity {
             //recorder.stop();
         }).start();
 
-        new Thread(() -> {
-            while (true) {
-                runOnUiThread(() -> runOnUiThread(() -> gauge.setFrequency(AudioAnalyzer.getFreq())));
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() ->
+                runOnUiThread(
+                        () -> gauge.setFrequency(AudioAnalyzer.getFreq())
+                ), 0, 100, TimeUnit.MILLISECONDS);
     }
 
     @Override
