@@ -10,13 +10,15 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import java.util.Locale;
+
 public class Gauge extends View {
     private Paint circlePaint, notePaint, freqPaint, gaugePaint;
     private float gaugeLength;
     private float circleRadius, centerX, centerY;
     private float angle;
     private String note;
-    private float frequency;
+    private String frequency;
 
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
@@ -50,7 +52,7 @@ public class Gauge extends View {
 
         angle = 0;
         note = "A#";
-        frequency = 220.3f;
+        setFrequency(0);
     }
 
     public Gauge(Context context, @Nullable AttributeSet attrs) {
@@ -68,8 +70,12 @@ public class Gauge extends View {
     }
 
     public void setFrequency(float frequency) {
-        this.frequency = frequency;
-        invalidate();
+        String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
+
+        if (!new_freq.equals(this.frequency)) {
+            this.frequency = new_freq;
+            invalidate();
+        }
     }
 
     @Override
