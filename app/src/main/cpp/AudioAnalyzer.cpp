@@ -1,6 +1,7 @@
 #include "AudioAnalyzer.h"
 #include <cmath>
 #include <algorithm>
+#include <android/log.h>
 
 constexpr auto CHUNK_SIZE = 1024; //Number of samples
 constexpr auto BUFFER_TIMES = 50;
@@ -36,7 +37,7 @@ AudioAnalyzer::AudioAnalyzer() :
         fft_input[i] = 0;
 
     //Inizialize fftw plan
-    fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_ESTIMATE);
+    fft_plan = fftwf_plan_dft_r2c_1d(FFT_INPUT_SIZE, fft_input.get(), fft_out.get(), FFTW_MEASURE);
 }
 
 AudioAnalyzer::~AudioAnalyzer() {
@@ -54,7 +55,7 @@ void AudioAnalyzer::feed_data(short *data, int length) {
         buffer.enqueue(data[i]);
 
     //Multiply the window by the input
-    for (int i = 0; i < BUFFER_SIZE; i++)
+    for (int i = 0; i < BUFFER_SIZE; ++i)
         fft_input[i] = (float) buffer.get(i) * window[i];
 
     //Compute real fft on fft_input

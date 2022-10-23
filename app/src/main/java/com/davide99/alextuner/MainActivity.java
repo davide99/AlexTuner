@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int SAMPLE_RATE = AudioAnalyzer.getSampleRate();
     private static final int CHUNK_SIZE = AudioAnalyzer.getChunkSize(); //Number of samples
 
+    private boolean was_recording = false;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -53,31 +55,52 @@ public class MainActivity extends AppCompatActivity {
                 SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+                10 * AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         );
 
         AudioAnalyzer.init();
 
-
-        //TextView tv = binding.sampleText;
+        TextView tv = binding.sampleText;
 
         new Thread(() -> {
             recorder.startRecording();
+            was_recording = true;
             short[] data = new short[CHUNK_SIZE];
 
             while (true) {
                 recorder.read(data, 0, data.length);
                 AudioAnalyzer.feedData(data);
-                Log.i("FREQ", Float.toString(AudioAnalyzer.getFreq()));
-
-                /*try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
+                runOnUiThread(() -> tv.setText(Float.toString(AudioAnalyzer.getFreq())));
             }
 
             //recorder.stop();
         }).start();
+
+        /*new Thread(() -> {
+            while (true) {
+                runOnUiThread(() -> tv.setText(Float.toString(AudioAnalyzer.getFreq())));
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (was_recording)
+            recorder.startRecording();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (was_recording)
+            recorder.stop();
     }
 }

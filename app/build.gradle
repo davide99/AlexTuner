@@ -20,6 +20,7 @@ android {
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
