@@ -3,6 +3,7 @@
 #endif
 
 #include <jni.h>
+#include <cmath>
 #include "AudioAnalyzer.h"
 
 static AudioAnalyzer *audioRecorder = nullptr;
@@ -51,4 +52,9 @@ Java_com_davide99_alextuner_AudioAnalyzer_getSampleRate(JNIEnv *env, jclass) {
 extern "C" JNIEXPORT jint JNICALL
 Java_com_davide99_alextuner_AudioAnalyzer_getChunkSize(JNIEnv *env, jclass) {
     return AudioAnalyzer::get_chunk_size();
+}
+
+extern "C" JNIEXPORT jfloat JNICALL
+Java_com_davide99_alextuner_Gauge_log2(JNIEnv *env, jclass, jfloat arg) {
+    return std::log2(arg);
 }

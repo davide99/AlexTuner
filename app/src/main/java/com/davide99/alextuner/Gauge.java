@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -74,7 +75,7 @@ public class Gauge extends View {
      * @return note number
      */
     private static float frequency_to_number(float freq) {
-        return Math.round(12.0f * Math.log(freq / A4) / Math.log(2) + 69.0);
+        return Math.round(12.0f * log2(freq / A4) + 69.0);
     }
 
     /**
@@ -97,6 +98,8 @@ public class Gauge extends View {
         return number % NOTE_NAMES.length;
     }
 
+    private static native float log2(float arg);
+
     public void setFrequency(float frequency) {
         String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
 
@@ -107,7 +110,7 @@ public class Gauge extends View {
             float note_number = frequency_to_number(frequency);
             int nearest_note_number = Math.round(note_number);
             int index = number_to_array_index(nearest_note_number);
-            int octave = (int) (Math.log(frequency / C0) / Math.log(2));
+            int octave = (int) log2(frequency / C0);
             if (index >= 0 && index < NOTE_NAMES.length)
                 this.note = NOTE_NAMES[index] + octave;
 
