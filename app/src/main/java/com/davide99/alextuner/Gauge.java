@@ -102,7 +102,7 @@ public class Gauge extends View {
     public void setFrequency(float frequency) {
         String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
 
-        if (!new_freq.equals(this.frequency)) {
+        if (!new_freq.equals(this.frequency) && !this.isInEditMode()) {
             this.frequency = new_freq;
 
             //Nome nota

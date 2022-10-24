@@ -20,7 +20,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/app_name"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,9 +29,11 @@
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +46,8 @@
             <TextView
                 android:layout_column="1"
                 android:layout_span="2"
-                android:text="Si ringraziano quei pezzi di cocaleros di:"
+                android:paddingBottom="8dp"
+                android:text="@string/thanks_opening"
                 android:textColor="@color/white" />
         </TableRow>
 
@@ -54,13 +57,14 @@
 
             <TextView
                 android:layout_column="1"
+                android:paddingLeft="8dp"
                 android:text="•"
                 android:textColor="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_column="2"
-                android:text="Lorenzo Caputo (Arabella) per il supporto e il beta-testing"
+                android:text="@string/arabella"
                 android:textColor="@color/white" />
         </TableRow>
 
@@ -70,13 +74,14 @@
 
             <TextView
                 android:layout_column="1"
+                android:paddingLeft="8dp"
                 android:text="•"
                 android:textColor="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_column="2"
-                android:text="Gloria Coletta per l'icona dell'app"
+                android:text="@string/glo"
                 android:textColor="@color/white" />
         </TableRow>
     </TableLayout>

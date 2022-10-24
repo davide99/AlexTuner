@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.view.View;
 
 import com.davide99.alextuner.databinding.ActivityMainBinding;
 
@@ -51,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.aboutButton.setOnClickListener((View v) -> {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            MainActivity.this.startActivity(intent);
+        });
 
         recorder = new AudioRecord(
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
