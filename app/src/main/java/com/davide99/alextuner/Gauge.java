@@ -21,7 +21,8 @@ public class Gauge extends View {
     private String frequency;
     private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
-    private static final float C0 = (float) (440.0f * Math.pow(2, -4.75));
+    private static final float A4 = 440.0f;
+    private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
 
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
@@ -63,6 +64,36 @@ public class Gauge extends View {
         init(context, attrs);
     }
 
+    /**
+     * Converts a frequency to a note number (for example: A4 is 69)
+     *
+     * @param freq frequency to convert
+     * @return note number
+     */
+    private static float frequency_to_number(float freq) {
+        return Math.round(12.0f * Math.log(freq / A4) / Math.log(2) + 69.0);
+    }
+
+    /**
+     * Converts a note number (A4 is 69) back to frequency
+     *
+     * @param number note number
+     * @return frequency
+     */
+    private static float number_to_frequency(int number) {
+        return (float) (A4 * Math.pow(2, (number - 69) / 12.0));
+    }
+
+    /**
+     * Converts a note number to the index of the note name in the NOTES_NAMES array
+     *
+     * @param number number of the note
+     * @return index of the note name
+     */
+    private static int number_to_array_index(int number) {
+        return number % NOTE_NAMES.length;
+    }
+
     public void setFrequency(float frequency) {
         String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
 
@@ -70,22 +101,20 @@ public class Gauge extends View {
             this.frequency = new_freq;
 
             //Nome nota
-            int index = (int) ((Math.round(12.0 * Math.log(frequency / 440.0) / Math.log(2) + 69.0)) % 12);
-            int octave = (int) (Math.round(12.0 * Math.log(frequency / C0) / Math.log(2))) / 12;
+            float note_number = frequency_to_number(frequency);
+            int nearest_note_number = Math.round(note_number);
+            int index = number_to_array_index(nearest_note_number);
+            int octave = (int) (Math.log(frequency / C0) / Math.log(2));
             if (index >= 0 && index < NOTE_NAMES.length)
                 this.note = NOTE_NAMES[index] + octave;
 
             //Angolo ago
-            //convert frequency to note number
-            float number = (float) (12.0f * Math.log(frequency/440.0) / Math.log(2) + 69.0f);
-            //calculate nearest note number, name and frequency
-            int nearest_note_number = Math.round(number);
-            float nearest_note_freq = (float) (440.0f * Math.pow(2, (nearest_note_number - 69) / 12.0));
+            float nearest_note_freq = number_to_frequency(nearest_note_number);
             //calculate frequency difference from freq to nearest note
             float freq_difference = nearest_note_freq - frequency;
 
             //calculate the frequency difference to the next note (-1)
-            float semitone_step = (float) (nearest_note_freq - (440.0f * Math.pow(2, (Math.round(number-1) - 69) / 12.0)));
+            float semitone_step = nearest_note_freq - number_to_frequency(Math.round(note_number - 1));
 
             //calculate the angle of the display needle
             angle = (float) (-Math.PI * ((freq_difference / semitone_step) * 2));
