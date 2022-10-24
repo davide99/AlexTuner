@@ -24,10 +24,12 @@ public class Gauge extends View {
     private static final float A4 = 440.0f;
     private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
 
+    private static int circleColorWrong = Color.RED;
+    private static int circleColorOk = Color.GREEN;
+
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
         int textColor = Color.WHITE;
-        int circleColor = Color.RED;
 
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -37,12 +39,13 @@ public class Gauge extends View {
 
             gaugeColor = a.getColor(R.styleable.Gauge_gaugeColor, gaugeColor);
             textColor = a.getColor(R.styleable.Gauge_textColor, textColor);
-            circleColor = a.getColor(R.styleable.Gauge_circleColor, circleColor);
+            circleColorWrong = a.getColor(R.styleable.Gauge_circleColorWrong, circleColorWrong);
+            circleColorOk = a.getColor(R.styleable.Gauge_circleColorWrong, circleColorOk);
             a.recycle();
         }
 
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circlePaint.setColor(circleColor);
+        circlePaint.setColor(circleColorWrong);
 
         notePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         notePaint.setColor(textColor);
@@ -118,6 +121,12 @@ public class Gauge extends View {
 
             //calculate the angle of the display needle
             angle = (float) (-Math.PI * ((freq_difference / semitone_step) * 2));
+
+            if (Math.abs(freq_difference) < 0.25) {
+                circlePaint.setColor(circleColorOk);
+            } else {
+                circlePaint.setColor(circleColorWrong);
+            }
 
             invalidate();
         }
