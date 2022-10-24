@@ -63,11 +63,6 @@ public class Gauge extends View {
         init(context, attrs);
     }
 
-    public void setAngle(float angle) {
-        this.angle = angle;
-        invalidate();
-    }
-
     public void setNote(String note) {
         this.note = note;
     }
@@ -78,10 +73,26 @@ public class Gauge extends View {
         if (!new_freq.equals(this.frequency)) {
             this.frequency = new_freq;
 
+            //Nome nota
             int index = (int) ((Math.round(12.0 * Math.log(frequency / 440.0) / Math.log(2) + 69.0)) % 12);
             int octave = (int) (Math.round(12.0 * Math.log(frequency / C0) / Math.log(2))) / 12;
             if (index >= 0 && index < NOTE_NAMES.length)
                 this.note = NOTE_NAMES[index] + octave;
+
+            //Angolo ago
+            //convert frequency to note number
+            float number = (float) (12.0f * Math.log(frequency/440.0) / Math.log(2) + 69.0f);
+            //calculate nearest note number, name and frequency
+            int nearest_note_number = Math.round(number);
+            float nearest_note_freq = (float) (440.0f * Math.pow(2, (nearest_note_number - 69) / 12.0));
+            //calculate frequency difference from freq to nearest note
+            float freq_difference = nearest_note_freq - frequency;
+
+            //calculate the frequency difference to the next note (-1)
+            float semitone_step = (float) (nearest_note_freq - (440.0f * Math.pow(2, (Math.round(number-1) - 69) / 12.0)));
+
+            //calculate the angle of the display needle
+            angle = (float) (-Math.PI * ((freq_difference / semitone_step) * 2));
 
             invalidate();
         }
