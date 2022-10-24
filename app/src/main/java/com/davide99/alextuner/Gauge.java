@@ -63,10 +63,6 @@ public class Gauge extends View {
         init(context, attrs);
     }
 
-    public void setNote(String note) {
-        this.note = note;
-    }
-
     public void setFrequency(float frequency) {
         String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
 
