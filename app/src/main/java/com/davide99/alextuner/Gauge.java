@@ -122,7 +122,7 @@ public class Gauge extends View {
             float semitone_step = nearest_note_freq - number_to_frequency(Math.round(note_number - 1));
 
             //calculate the angle of the display needle
-            angle = (float) (-Math.PI * ((freq_difference / semitone_step) * 2));
+            angle = (float) (-Math.PI * freq_difference / semitone_step);
 
             if (Math.abs(freq_difference) < 0.25) {
                 circlePaint.setColor(circleColorOk);
