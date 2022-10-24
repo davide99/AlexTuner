@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import java.util.Locale;
 
 public class Gauge extends View {
-    private Paint circlePaint, notePaint, freqPaint, gaugePaint;
+    private Paint circlePaint, notePaint, freqPaint, movingGaugePaint, fixedGaugePaint;
     private float gaugeLength;
     private float circleRadius, centerX, centerY;
     private float angle;
@@ -53,9 +53,15 @@ public class Gauge extends View {
         freqPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         freqPaint.setColor(textColor);
 
-        gaugePaint = new Paint();
-        gaugePaint.setColor(gaugeColor);
-        gaugePaint.setStrokeWidth(20);
+        movingGaugePaint = new Paint();
+        movingGaugePaint.setColor(gaugeColor);
+        movingGaugePaint.setStrokeWidth(20);
+        movingGaugePaint.setStrokeCap(Paint.Cap.ROUND);
+
+        fixedGaugePaint = new Paint();
+        fixedGaugePaint.setColor(circleColorOk);
+        fixedGaugePaint.setStrokeWidth(30);
+        fixedGaugePaint.setStrokeCap(Paint.Cap.ROUND);
 
         angle = 0;
         note = "A#";
@@ -148,7 +154,8 @@ public class Gauge extends View {
         float gaugeX = (float) Math.sin(angle) * gaugeLength;
         float gaugeY = (float) -Math.cos(angle) * gaugeLength;
 
-        canvas.drawLine(centerX, centerY, centerX + gaugeX, centerY + gaugeY, gaugePaint);
+        canvas.drawLine(centerX, centerY, centerX, centerY - gaugeLength, fixedGaugePaint);
+        canvas.drawLine(centerX, centerY, centerX + gaugeX, centerY + gaugeY, movingGaugePaint);
         canvas.drawCircle(centerX, centerY, circleRadius, circlePaint);
 
         notePaint.setTextSize(circleRadius / 2.0f);
