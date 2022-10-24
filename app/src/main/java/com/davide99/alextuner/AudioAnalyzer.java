@@ -9,6 +9,7 @@ public class AudioAnalyzer {
     static public native void destroy();
     static public native void feedData(short[] data);
     static public native float getFreq();
+
     static public native int getSampleRate();
     static public native int getChunkSize();
 }

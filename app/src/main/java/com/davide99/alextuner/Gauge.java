@@ -19,8 +19,8 @@ public class Gauge extends View {
     private float angle;
     private String note;
     private String frequency;
-    private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
+    private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     private static final float A4 = 440.0f;
     private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
 
