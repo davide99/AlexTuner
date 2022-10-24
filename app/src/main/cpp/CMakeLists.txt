@@ -25,5 +25,4 @@ target_link_libraries(
         alextuner
         fftw3f
         fftw3f_threads
-        ${log-lib}
 )
