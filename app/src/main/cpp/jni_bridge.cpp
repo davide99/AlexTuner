@@ -19,8 +19,10 @@ Java_com_davide99_alextuner_AudioAnalyzer_init(JNIEnv *env, jclass) {
 extern "C" JNIEXPORT void JNICALL
 Java_com_davide99_alextuner_AudioAnalyzer_destroy(JNIEnv *env, jclass) {
     //seek & destroy
-    delete audioRecorder;
-    audioRecorder = nullptr;
+    if (audioRecorder != nullptr) {
+        delete audioRecorder;
+        audioRecorder = nullptr;
+    }
 }
 
 extern "C" JNIEXPORT void JNICALL

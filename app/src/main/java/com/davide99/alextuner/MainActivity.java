@@ -20,7 +20,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
     private AudioRecord recorder;
 
     // Requesting permission to RECORD_AUDIO
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CHUNK_SIZE = AudioAnalyzer.getChunkSize(); //Number of samples
 
     private boolean was_recording = false;
+    private Thread recording_thread;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.aboutButton.setOnClickListener((View v) -> {
@@ -71,18 +71,17 @@ public class MainActivity extends AppCompatActivity {
 
         Gauge gauge = binding.gauge;
 
-        new Thread(() -> {
+        recording_thread = new Thread(() -> {
             recorder.startRecording();
             was_recording = true;
             short[] data = new short[CHUNK_SIZE];
 
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 recorder.read(data, 0, data.length);
                 AudioAnalyzer.feedData(data);
             }
-
-            //recorder.stop();
-        }).start();
+        });
+        recording_thread.start();
 
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() ->
@@ -105,5 +104,26 @@ public class MainActivity extends AppCompatActivity {
 
         if (was_recording)
             recorder.stop();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (was_recording)
+            recorder.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        recording_thread.interrupt();
+        try {
+            recording_thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        AudioAnalyzer.destroy();
     }
 }
