@@ -20,17 +20,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    private AudioRecord recorder;
-
-    // Requesting permission to RECORD_AUDIO
     private static final String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     private static final int SAMPLE_RATE = AudioAnalyzer.getSampleRate();
     private static final int CHUNK_SIZE = AudioAnalyzer.getChunkSize(); //Number of samples
 
+    private AudioRecord recorder;
     private boolean was_recording = false;
     private Thread recording_thread;
+
+    private static final int FPS = 30;
+    private static final int MILLIS_FPS = (int)(1000.0f / FPS);
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -69,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         AudioAnalyzer.init();
 
-        Gauge gauge = binding.gauge;
-
         recording_thread = new Thread(() -> {
             recorder.startRecording();
             was_recording = true;
@@ -83,11 +82,12 @@ public class MainActivity extends AppCompatActivity {
         });
         recording_thread.start();
 
+        Gauge gauge = binding.gauge;
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() ->
                 runOnUiThread(
                         () -> gauge.setFrequency(AudioAnalyzer.getFreq())
-                ), 0, 100, TimeUnit.MILLISECONDS);
+                ), 0, MILLIS_FPS, TimeUnit.MILLISECONDS);
     }
 
     @Override
