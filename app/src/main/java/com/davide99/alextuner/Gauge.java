@@ -181,11 +181,10 @@ public class Gauge extends View {
 
         //Nota bassa
         sideNotesPaint.getTextBounds(lowerNote, 0, lowerNote.length(), textBounds);
-        //canvas.drawText(lowerNote, (centerX - gaugeLength) - (gaugeLength - circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
-        canvas.drawText(lowerNote, centerX - (gaugeLength + circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        canvas.drawText(lowerNote, centerX - gaugeLength - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
         //Nota alta
         sideNotesPaint.getTextBounds(higherNote, 0, higherNote.length(), textBounds);
-        canvas.drawText(higherNote, centerX + (gaugeLength + circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        canvas.drawText(higherNote, centerX + gaugeLength - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
 
         //Nota principale
         notePaint.getTextBounds(note, 0, note.length(), textBounds);
