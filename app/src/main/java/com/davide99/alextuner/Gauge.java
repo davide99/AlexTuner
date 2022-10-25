@@ -18,17 +18,17 @@ public class Gauge extends View {
     private Paint circlePaint, notePaint, sideNotesPaint, freqPaint, movingGaugePaint, fixedGaugePaint;
     private float gaugeLength;
     private float circleRadius, centerX;
-    private float angle;
+    private float gaugeAngle;
     private String note, lowerNote, higherNote;
     private String frequency;
-    private RectF oval;
+    private RectF semicircle;
     private Rect textBounds;
 
     private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     private static final float A4 = 440.0f;
     private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
-    private static final int PADDING = 24;
 
+    private static final int PADDING = 24;
     private static int circleColorWrong = Color.RED;
     private static int circleColorOk = Color.GREEN;
 
@@ -73,7 +73,7 @@ public class Gauge extends View {
 
         textBounds = new Rect();
 
-        angle = 0;
+        gaugeAngle = 0;
         note = "A#";
         lowerNote = "A";
         higherNote = "B#";
@@ -143,7 +143,7 @@ public class Gauge extends View {
             float semitone_step = nearest_note_freq - number_to_frequency(Math.round(note_number - 1));
 
             //calculate the angle of the display needle
-            angle = (float) (-Math.PI * freq_difference / semitone_step);
+            gaugeAngle = (float) (-Math.PI * freq_difference / semitone_step);
 
             if (Math.abs(freq_difference) < 0.25) {
                 circlePaint.setColor(circleColorOk);
@@ -161,7 +161,7 @@ public class Gauge extends View {
         centerX = getWidth() * 0.5f;
         gaugeLength = size * 0.5f;
         circleRadius = gaugeLength * 0.8f;
-        oval = new RectF(centerX - circleRadius, -circleRadius, centerX + circleRadius, circleRadius);
+        semicircle = new RectF(centerX - circleRadius, -circleRadius, centerX + circleRadius, circleRadius);
         sideNotesPaint.setTextSize((gaugeLength - circleRadius)*0.8f);
         notePaint.setTextSize(circleRadius / 2.0f);
         freqPaint.setTextSize(circleRadius / 8.0f);
@@ -169,15 +169,15 @@ public class Gauge extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float gaugeX = (float) Math.sin(angle) * gaugeLength;
-        float gaugeY = (float) Math.cos(angle) * gaugeLength;
+        float gaugeX = (float) Math.sin(gaugeAngle) * gaugeLength;
+        float gaugeY = (float) Math.cos(gaugeAngle) * gaugeLength;
 
         //Linea verde (mobile)
         canvas.drawLine(centerX, 0, centerX, gaugeLength, fixedGaugePaint);
         //Linea mobile
         canvas.drawLine(centerX, 0, centerX + gaugeX, gaugeY, movingGaugePaint);
         //Semicerchio
-        canvas.drawArc(oval, 0, 180, false, circlePaint);
+        canvas.drawArc(semicircle, 0, 180, false, circlePaint);
 
         //Nota bassa
         sideNotesPaint.getTextBounds(lowerNote, 0, lowerNote.length(), textBounds);
