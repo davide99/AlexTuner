@@ -16,8 +16,8 @@
         android:textColorHint="@color/white"
         app:backgroundTint="@color/black"
         app:elevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.davide99.alextuner.Gauge
         android:id="@+id/gauge"

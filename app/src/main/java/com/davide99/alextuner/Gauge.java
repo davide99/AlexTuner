@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -13,16 +15,19 @@ import androidx.annotation.Nullable;
 import java.util.Locale;
 
 public class Gauge extends View {
-    private Paint circlePaint, notePaint, freqPaint, movingGaugePaint, fixedGaugePaint;
+    private Paint circlePaint, notePaint, sideNotesPaint, freqPaint, movingGaugePaint, fixedGaugePaint;
     private float gaugeLength;
-    private float circleRadius, centerX, centerY;
+    private float circleRadius, centerX;
     private float angle;
-    private String note;
+    private String note, lowerNote, higherNote;
     private String frequency;
+    private RectF oval;
+    private Rect textBounds;
 
     private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     private static final float A4 = 440.0f;
     private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
+    private static final int PADDING = 24;
 
     private static int circleColorWrong = Color.RED;
     private static int circleColorOk = Color.GREEN;
@@ -50,6 +55,9 @@ public class Gauge extends View {
         notePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         notePaint.setColor(textColor);
 
+        sideNotesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        sideNotesPaint.setColor(textColor);
+
         freqPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         freqPaint.setColor(textColor);
 
@@ -63,8 +71,12 @@ public class Gauge extends View {
         fixedGaugePaint.setStrokeWidth(30);
         fixedGaugePaint.setStrokeCap(Paint.Cap.ROUND);
 
+        textBounds = new Rect();
+
         angle = 0;
         note = "A#";
+        lowerNote = "A";
+        higherNote = "B#";
         setFrequency(0);
     }
 
@@ -116,8 +128,11 @@ public class Gauge extends View {
             int nearest_note_number = Math.round(note_number);
             int index = number_to_array_index(nearest_note_number);
             int octave = (int) log2(frequency / C0);
-            if (index >= 0 && index < NOTE_NAMES.length)
+            if (index >= 0 && index < NOTE_NAMES.length) {
                 this.note = NOTE_NAMES[index] + octave;
+                this.lowerNote = NOTE_NAMES[(index + NOTE_NAMES.length - 1) % NOTE_NAMES.length];
+                this.higherNote = NOTE_NAMES[(index + 1) % NOTE_NAMES.length];
+            }
 
             //Angolo ago
             float nearest_note_freq = number_to_frequency(nearest_note_number);
@@ -142,31 +157,43 @@ public class Gauge extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        int size = Math.min(w, h);
+        int size = (int) (Math.min(w, h) * 0.9);
         centerX = getWidth() * 0.5f;
-        centerY = getHeight() * 0.5f;
         gaugeLength = size * 0.5f;
         circleRadius = gaugeLength * 0.8f;
+        oval = new RectF(centerX - circleRadius, -circleRadius, centerX + circleRadius, circleRadius);
+        sideNotesPaint.setTextSize((gaugeLength - circleRadius)*0.8f);
+        notePaint.setTextSize(circleRadius / 2.0f);
+        freqPaint.setTextSize(circleRadius / 8.0f);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         float gaugeX = (float) Math.sin(angle) * gaugeLength;
-        float gaugeY = (float) -Math.cos(angle) * gaugeLength;
+        float gaugeY = (float) Math.cos(angle) * gaugeLength;
 
-        canvas.drawLine(centerX, centerY, centerX, centerY - gaugeLength, fixedGaugePaint);
-        canvas.drawLine(centerX, centerY, centerX + gaugeX, centerY + gaugeY, movingGaugePaint);
-        canvas.drawCircle(centerX, centerY, circleRadius, circlePaint);
+        //Linea verde (mobile)
+        canvas.drawLine(centerX, 0, centerX, gaugeLength, fixedGaugePaint);
+        //Linea mobile
+        canvas.drawLine(centerX, 0, centerX + gaugeX, gaugeY, movingGaugePaint);
+        //Semicerchio
+        canvas.drawArc(oval, 0, 180, false, circlePaint);
 
-        notePaint.setTextSize(circleRadius / 2.0f);
-        float noteOffsetX = notePaint.measureText(note) * -0.5f;
-        float noteOffsetY = notePaint.getFontMetrics().ascent * -0.4f;
-        canvas.drawText(note, centerX + noteOffsetX, centerY + noteOffsetY, notePaint);
+        //Nota bassa
+        sideNotesPaint.getTextBounds(lowerNote, 0, lowerNote.length(), textBounds);
+        //canvas.drawText(lowerNote, (centerX - gaugeLength) - (gaugeLength - circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        canvas.drawText(lowerNote, centerX - (gaugeLength + circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        //Nota alta
+        sideNotesPaint.getTextBounds(higherNote, 0, higherNote.length(), textBounds);
+        canvas.drawText(higherNote, centerX + (gaugeLength + circleRadius) / 2.0f - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
 
+        //Nota principale
+        notePaint.getTextBounds(note, 0, note.length(), textBounds);
+        canvas.drawText(note, centerX - textBounds.exactCenterX(), textBounds.height() + PADDING, notePaint);
+
+        //Frequenza
         String freq = frequency + " Hz";
-        freqPaint.setTextSize(circleRadius / 8.0f);
-        float freqOffsetX = freqPaint.measureText(freq) * -0.5f;
-        float freqOffsetY = freqPaint.getFontMetrics().ascent * -0.4f - notePaint.getFontMetrics().ascent;
-        canvas.drawText(freq, centerX + freqOffsetX, centerY + freqOffsetY, freqPaint);
+        freqPaint.getTextBounds(freq, 0, freq.length(), textBounds);
+        canvas.drawText(freq, centerX - textBounds.exactCenterX(), circleRadius - textBounds.height() - PADDING, freqPaint);
     }
 }
