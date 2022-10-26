@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
@@ -22,5 +23,7 @@ public class AboutActivity extends AppCompatActivity {
         binding.licenzeBtn.setOnClickListener((View v) -> {
             startActivity(new Intent(this, OssLicensesMenuActivity.class));
         });
+
+        binding.fftwLicense.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

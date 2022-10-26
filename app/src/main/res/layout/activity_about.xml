@@ -84,6 +84,19 @@
                 android:text="@string/glo"
                 android:textColor="@color/white" />
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/fftw_license"
+                android:layout_column="1"
+                android:layout_span="2"
+                android:paddingTop="8dp"
+                android:text="@string/fftw_license"
+                android:textColor="@color/white" />
+        </TableRow>
     </TableLayout>
 
     <Button
@@ -91,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Licenze"
+        android:text="Altre Licenze"
         app:backgroundTint="#00BBD3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
