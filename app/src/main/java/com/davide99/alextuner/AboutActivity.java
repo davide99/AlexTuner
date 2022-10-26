@@ -25,5 +25,6 @@ public class AboutActivity extends AppCompatActivity {
         });
 
         binding.fftwLicense.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.githubRepo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

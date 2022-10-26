@@ -3,5 +3,6 @@
     <string name="thanks_opening">Si ringraziano quei pezzi di cocaleros di:</string>
     <string name="arabella"><b>Lorenzo Caputo</b> (Arabella) per il supporto e il beta-testing</string>
     <string name="glo"><b>Gloria Coletta</b> per l\'icona dell\'app</string>
+    <string name="github_repo">Questa app è rilasciata sotto licenza <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GNU GPL v2</a>, il codice sorgente è disponibile su <a href="https://github.com/davide99/AlexTuner">github</a>.</string>
     <string name="fftw_license">L\'app è basata sulla libreria FFTW, rilasciata con licenza <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GNU GPL v2</a> o superiore.</string>
 </resources>
