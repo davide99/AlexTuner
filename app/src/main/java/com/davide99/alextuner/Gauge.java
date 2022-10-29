@@ -157,12 +157,11 @@ public class Gauge extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        int size = (int) (Math.min(w, h) * 0.9);
-        centerX = getWidth() * 0.5f;
-        gaugeLength = size * 0.5f;
+        centerX = w * 0.5f;
+        gaugeLength = w * 0.9f * 0.5f;
         circleRadius = gaugeLength * 0.8f;
         semicircle = new RectF(centerX - circleRadius, -circleRadius, centerX + circleRadius, circleRadius);
-        sideNotesPaint.setTextSize((gaugeLength - circleRadius)*0.8f);
+        sideNotesPaint.setTextSize((gaugeLength - circleRadius) * 0.8f);
         notePaint.setTextSize(circleRadius / 2.0f);
         freqPaint.setTextSize(circleRadius / 8.0f);
     }
@@ -194,5 +193,11 @@ public class Gauge extends View {
         String freq = frequency + " Hz";
         freqPaint.getTextBounds(freq, 0, freq.length(), textBounds);
         canvas.drawText(freq, centerX - textBounds.exactCenterX(), circleRadius - textBounds.height() - PADDING, freqPaint);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / 2);
     }
 }
