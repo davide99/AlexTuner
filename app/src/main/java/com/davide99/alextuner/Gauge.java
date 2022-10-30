@@ -150,7 +150,7 @@ public class Gauge extends View {
             if (Math.abs(freq_difference) < 0.25) {
                 circlePaint.setColor(circleColorOk);
                 if (listener != null)
-                    listener.setTuned(NOTE_NAMES[index]);
+                    listener.setTuned(this.note);
             } else {
                 circlePaint.setColor(circleColorWrong);
             }
