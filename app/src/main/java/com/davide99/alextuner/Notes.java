@@ -8,21 +8,29 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Arrays;
 
 
 public class Notes extends View {
     private String[] notes;
+    private boolean[] tuned;
     private int spacing;
     private int note_size;
-    private Paint notePaint, textPaint;
+    private Paint notePaintWrong, notePaintOk, textPaint;
     private Rect textBounds;
 
     private void init(Context context, AttributeSet attrs) {
         notes = new String[]{"E#", "A", "D", "G", "B", "E"};
+        tuned = new boolean[]{false, false, false, false, false, false};
 
-        notePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        notePaint.setColor(Color.RED);
+        notePaintWrong = new Paint(Paint.ANTI_ALIAS_FLAG);
+        notePaintWrong.setColor(Color.RED);
+
+        notePaintOk = new Paint(Paint.ANTI_ALIAS_FLAG);
+        notePaintOk.setColor(Color.GREEN);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.WHITE);
@@ -57,9 +65,16 @@ public class Notes extends View {
         }
     }
 
-    public void setNotes(String[] notes) {
+    public void setNotes(@NonNull String[] notes) {
         this.notes = notes;
+        tuned = new boolean[notes.length];
+        Arrays.fill(tuned, false);
         recompute_everything(super.getWidth());
+    }
+
+    public void setTuned(int pos) {
+        tuned[pos] = true;
+        invalidate();
     }
 
     @Override
@@ -73,7 +88,7 @@ public class Notes extends View {
 
         for (int i = 0; i < notes.length; i++) {
             float cx = (i + 1) * spacing + (2 * i + 1) * note_size / 2f;
-            canvas.drawCircle(cx, cy, note_size / 2f, notePaint);
+            canvas.drawCircle(cx, cy, note_size / 2f, tuned[i] ? notePaintOk : notePaintWrong);
             textPaint.getTextBounds(notes[i], 0, notes[i].length(), textBounds);
             canvas.drawText(notes[i], cx - textBounds.exactCenterX(), cy - textBounds.exactCenterY(), textPaint);
         }

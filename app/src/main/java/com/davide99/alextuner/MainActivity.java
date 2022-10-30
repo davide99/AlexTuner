@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(
                         () -> gauge.setFrequency(AudioAnalyzer.getFreq())
                 ), 0, MILLIS_FPS, TimeUnit.MILLISECONDS);
+
+        binding.notes.setNotes(new String[]{"E", "A", "D", "G", "B", "E"});
+        binding.notes.setTuned(2);
     }
 
     @Override
