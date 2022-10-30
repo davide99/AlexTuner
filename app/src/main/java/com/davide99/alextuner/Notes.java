@@ -72,9 +72,14 @@ public class Notes extends View {
         recompute_everything(super.getWidth());
     }
 
-    public void setTuned(int pos) {
-        tuned[pos] = true;
-        invalidate();
+    public void setTuned(String note) {
+        for (int i = 0; i < notes.length; i++) {
+            if (notes[i].equals(note)) {
+                tuned[i] = true;
+                invalidate();
+                break;
+            }
+        }
     }
 
     @Override

@@ -32,6 +32,8 @@ public class Gauge extends View {
     private static int circleColorWrong = Color.RED;
     private static int circleColorOk = Color.GREEN;
 
+    private TunedNoteListener listener = null;
+
     private void init(Context context, AttributeSet attrs) {
         int gaugeColor = Color.WHITE;
         int textColor = Color.WHITE;
@@ -147,12 +149,18 @@ public class Gauge extends View {
 
             if (Math.abs(freq_difference) < 0.25) {
                 circlePaint.setColor(circleColorOk);
+                if (listener != null)
+                    listener.setTuned(NOTE_NAMES[index]);
             } else {
                 circlePaint.setColor(circleColorWrong);
             }
 
             invalidate();
         }
+    }
+
+    public void setListener(TunedNoteListener listener) {
+        this.listener = listener;
     }
 
     @Override
