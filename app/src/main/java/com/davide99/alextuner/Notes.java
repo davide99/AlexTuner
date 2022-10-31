@@ -36,8 +36,6 @@ public class Notes extends View {
         textPaint.setColor(Color.WHITE);
 
         textBounds = new Rect();
-
-        super.setBackgroundColor(Color.TRANSPARENT);
     }
 
     public Notes(Context context, @Nullable AttributeSet attrs) {
