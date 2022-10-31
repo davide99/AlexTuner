@@ -8,13 +8,14 @@
 
     <Button
         android:id="@+id/about_button"
-        style="@style/Widget.AppCompat.Button.Small"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/about_btn"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        app:backgroundTint="@color/black"
+        android:textSize="20sp"
+        app:backgroundTint="@color/pastel_black"
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
