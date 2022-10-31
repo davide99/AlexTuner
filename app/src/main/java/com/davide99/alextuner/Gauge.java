@@ -187,10 +187,10 @@ public class Gauge extends View {
 
         //Lower note
         sideNotesPaint.getTextBounds(lowerNote, 0, lowerNote.length(), textBounds);
-        canvas.drawText(lowerNote, centerX - gaugeLength - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        canvas.drawText(lowerNote, centerX - circleRadius + PADDING, textBounds.height() + PADDING, sideNotesPaint);
         //Higher note
         sideNotesPaint.getTextBounds(higherNote, 0, higherNote.length(), textBounds);
-        canvas.drawText(higherNote, centerX + gaugeLength - textBounds.exactCenterX(), textBounds.height() + PADDING, sideNotesPaint);
+        canvas.drawText(higherNote, centerX + circleRadius - textBounds.width() - PADDING, textBounds.height() + PADDING, sideNotesPaint);
 
         //Note
         notePaint.getTextBounds(note, 0, note.length(), textBounds);
