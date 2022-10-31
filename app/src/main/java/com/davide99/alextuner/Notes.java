@@ -25,6 +25,9 @@ public class Notes extends View {
     private Paint notePaintWrong, notePaintOk, textPaint;
     private Rect textBounds;
     private boolean isVertical;
+    private static int outOfTuneColor = Color.RED;
+    private static int inTuneColor = Color.GREEN;
+    private static int textColor = Color.WHITE;
 
     private void init(Context context, AttributeSet attrs) {
         isVertical = false;
@@ -36,6 +39,9 @@ public class Notes extends View {
 
             //TODO: there's some enum somewhere?
             isVertical = a.getInt(R.styleable.Notes_android_orientation, isVertical ? 1 : 0) == 1;
+            outOfTuneColor = a.getColor(R.styleable.Notes_outOfTuneColor, outOfTuneColor);
+            inTuneColor = a.getColor(R.styleable.Notes_inTuneColor, inTuneColor);
+            textColor = a.getColor(R.styleable.Notes_textColor, textColor);
             a.recycle();
         }
 
@@ -43,13 +49,13 @@ public class Notes extends View {
         tuned = new boolean[]{false, false, false, false, false, false};
 
         notePaintWrong = new Paint(Paint.ANTI_ALIAS_FLAG);
-        notePaintWrong.setColor(Color.RED);
+        notePaintWrong.setColor(outOfTuneColor);
 
         notePaintOk = new Paint(Paint.ANTI_ALIAS_FLAG);
-        notePaintOk.setColor(Color.GREEN);
+        notePaintOk.setColor(inTuneColor);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.WHITE);
+        textPaint.setColor(textColor);
 
         textBounds = new Rect();
 
