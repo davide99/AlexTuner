@@ -11,7 +11,7 @@
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="\?"
+        android:text="@string/about_btn"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         app:backgroundTint="@color/black"
