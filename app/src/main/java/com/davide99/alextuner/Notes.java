@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -50,6 +52,8 @@ public class Notes extends View {
         textPaint.setColor(Color.WHITE);
 
         textBounds = new Rect();
+
+        super.setSaveEnabled(true);
     }
 
     public Notes(Context context, @Nullable AttributeSet attrs) {
@@ -139,4 +143,51 @@ public class Notes extends View {
             setMeasuredDimension(getMeasuredWidth(), note_size);
         }
     }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.tunedState = tuned;
+        return ss;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+        tuned = ss.tunedState;
+    }
+
+
+    static class SavedState extends BaseSavedState {
+        boolean[] tunedState;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            in.readBooleanArray(tunedState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeBooleanArray(tunedState);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+    }
+
 }
