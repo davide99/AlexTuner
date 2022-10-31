@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Gauge">
-        <attr name="circleColorWrong" format="color|reference" />
-        <attr name="circleColorOk" format="color|reference" />
+        <attr name="outOfTuneColor" format="color|reference" />
+        <attr name="inTuneColor" format="color|reference" />
         <attr name="gaugeColor" format="color|reference" />
         <attr name="textColor" format="color|reference" />
     </declare-styleable>

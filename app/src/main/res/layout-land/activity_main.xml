@@ -28,6 +28,8 @@
         android:keepScreenOn="true"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        app:inTuneColor="@color/pastel_green"
+        app:outOfTuneColor="@color/pastel_red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/notes"
         app:layout_constraintStart_toStartOf="parent"

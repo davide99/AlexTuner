@@ -29,8 +29,8 @@ public class Gauge extends View {
     private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
 
     private static final int PADDING = 24;
-    private static int circleColorWrong = Color.RED;
-    private static int circleColorOk = Color.GREEN;
+    private static int outOfTuneColor = Color.RED;
+    private static int inTuneColor = Color.GREEN;
 
     private TunedNoteListener listener = null;
 
@@ -46,13 +46,13 @@ public class Gauge extends View {
 
             gaugeColor = a.getColor(R.styleable.Gauge_gaugeColor, gaugeColor);
             textColor = a.getColor(R.styleable.Gauge_textColor, textColor);
-            circleColorWrong = a.getColor(R.styleable.Gauge_circleColorWrong, circleColorWrong);
-            circleColorOk = a.getColor(R.styleable.Gauge_circleColorWrong, circleColorOk);
+            outOfTuneColor = a.getColor(R.styleable.Gauge_outOfTuneColor, outOfTuneColor);
+            inTuneColor = a.getColor(R.styleable.Gauge_inTuneColor, inTuneColor);
             a.recycle();
         }
 
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circlePaint.setColor(circleColorWrong);
+        circlePaint.setColor(outOfTuneColor);
 
         notePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         notePaint.setColor(textColor);
@@ -69,7 +69,7 @@ public class Gauge extends View {
         movingGaugePaint.setStrokeCap(Paint.Cap.ROUND);
 
         fixedGaugePaint = new Paint();
-        fixedGaugePaint.setColor(circleColorOk);
+        fixedGaugePaint.setColor(outOfTuneColor);
         fixedGaugePaint.setStrokeWidth(30);
         fixedGaugePaint.setStrokeCap(Paint.Cap.ROUND);
 
@@ -148,11 +148,13 @@ public class Gauge extends View {
             gaugeAngle = (float) (-Math.PI * freq_difference / semitone_step);
 
             if (Math.abs(freq_difference) < 0.25) {
-                circlePaint.setColor(circleColorOk);
+                circlePaint.setColor(inTuneColor);
+                fixedGaugePaint.setColor(inTuneColor);
                 if (listener != null)
                     listener.setTuned(this.note);
             } else {
-                circlePaint.setColor(circleColorWrong);
+                circlePaint.setColor(outOfTuneColor);
+                fixedGaugePaint.setColor(outOfTuneColor);
             }
 
             invalidate();
@@ -179,7 +181,7 @@ public class Gauge extends View {
         float gaugeX = (float) Math.sin(gaugeAngle) * gaugeLength;
         float gaugeY = (float) Math.cos(gaugeAngle) * gaugeLength;
 
-        //Linea verde (mobile)
+        //Linea fissa
         canvas.drawLine(centerX, 0, centerX, gaugeLength, fixedGaugePaint);
         //Linea mobile
         canvas.drawLine(centerX, 0, centerX + gaugeX, gaugeY, movingGaugePaint);
