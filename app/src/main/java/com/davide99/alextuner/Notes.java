@@ -1,6 +1,7 @@
 package com.davide99.alextuner;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,8 +22,21 @@ public class Notes extends View {
     private int note_size;
     private Paint notePaintWrong, notePaintOk, textPaint;
     private Rect textBounds;
+    private boolean isVertical;
 
     private void init(Context context, AttributeSet attrs) {
+        isVertical = false;
+
+        if (attrs != null) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(
+                    attrs, R.styleable.Notes, 0, 0
+            );
+
+            //TODO: there's some enum somewhere?
+            isVertical = a.getInt(R.styleable.Notes_android_orientation, isVertical ? 1 : 0) == 1;
+            a.recycle();
+        }
+
         notes = new String[]{"E#", "A", "D", "G", "B", "E"};
         tuned = new boolean[]{false, false, false, false, false, false};
 
@@ -43,15 +57,15 @@ public class Notes extends View {
         init(context, attrs);
     }
 
-    private void compute_spacing_and_note_size(int view_width) {
-        int total_spacing = Math.round(view_width * 0.1f);
+    private void compute_spacing_and_note_size(int view_major_size) {
+        int total_spacing = Math.round(view_major_size * 0.1f);
         //Spacing between notes
         spacing = Math.round(total_spacing / (notes.length + 1f));
-        note_size = Math.round((view_width - total_spacing) / (notes.length * 1f));
+        note_size = Math.round((view_major_size - total_spacing) / (notes.length * 1f));
     }
 
-    private void recompute_everything(int w) {
-        compute_spacing_and_note_size(w);
+    private void recompute_everything(int view_major_size) {
+        compute_spacing_and_note_size(view_major_size);
 
         //We need to recompute the text sizes
         int max_note_length = 0;
@@ -69,7 +83,11 @@ public class Notes extends View {
         this.notes = notes;
         tuned = new boolean[notes.length];
         Arrays.fill(tuned, false);
-        recompute_everything(super.getWidth());
+        if (isVertical) {
+            recompute_everything(super.getHeight());
+        } else {
+            recompute_everything(super.getWidth());
+        }
     }
 
     public void setTuned(String note) {
@@ -84,7 +102,11 @@ public class Notes extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        recompute_everything(w);
+        if (isVertical) {
+            recompute_everything(h);
+        } else {
+            recompute_everything(w);
+        }
     }
 
     @Override
@@ -93,16 +115,28 @@ public class Notes extends View {
 
         for (int i = 0; i < notes.length; i++) {
             float cx = (i + 1) * spacing + (2 * i + 1) * note_size / 2f;
-            canvas.drawCircle(cx, cy, note_size / 2f, tuned[i] ? notePaintOk : notePaintWrong);
+            canvas.drawCircle(
+                    isVertical ? cy : cx, isVertical ? cx : cy,
+                    note_size / 2f, tuned[i] ? notePaintOk : notePaintWrong
+            );
             textPaint.getTextBounds(notes[i], 0, notes[i].length(), textBounds);
-            canvas.drawText(notes[i], cx - textBounds.exactCenterX(), cy - textBounds.exactCenterY(), textPaint);
+            canvas.drawText(notes[i],
+                    (isVertical ? cy : cx) - textBounds.exactCenterX(),
+                    (isVertical ? cx : cy) - textBounds.exactCenterY(),
+                    textPaint
+            );
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        compute_spacing_and_note_size(getMeasuredWidth());
-        setMeasuredDimension(getMeasuredWidth(), note_size);
+        if (isVertical) {
+            compute_spacing_and_note_size(getMeasuredHeight());
+            setMeasuredDimension(note_size, getMeasuredHeight());
+        } else {
+            compute_spacing_and_note_size(getMeasuredWidth());
+            setMeasuredDimension(getMeasuredWidth(), note_size);
+        }
     }
 }

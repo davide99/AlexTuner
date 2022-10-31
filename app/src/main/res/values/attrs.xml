@@ -6,4 +6,7 @@
         <attr name="gaugeColor" format="color|reference" />
         <attr name="textColor" format="color|reference" />
     </declare-styleable>
+    <declare-styleable name="Notes">
+        <attr name="android:orientation"/>
+    </declare-styleable>
 </resources>
