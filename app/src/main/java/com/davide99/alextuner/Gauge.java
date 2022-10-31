@@ -61,12 +61,12 @@ public class Gauge extends View {
         freqPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         freqPaint.setColor(textColor);
 
-        movingGaugePaint = new Paint();
+        movingGaugePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         movingGaugePaint.setColor(gaugeColor);
         movingGaugePaint.setStrokeWidth(20);
         movingGaugePaint.setStrokeCap(Paint.Cap.ROUND);
 
-        fixedGaugePaint = new Paint();
+        fixedGaugePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fixedGaugePaint.setColor(outOfTuneColor);
         fixedGaugePaint.setStrokeWidth(30);
         fixedGaugePaint.setStrokeCap(Paint.Cap.ROUND);

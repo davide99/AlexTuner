@@ -7,4 +7,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="pastel_red">#D32F2F</color>
     <color name="pastel_green">#4CAF50</color>
+    <color name="pastel_black">#212121</color>
 </resources>
