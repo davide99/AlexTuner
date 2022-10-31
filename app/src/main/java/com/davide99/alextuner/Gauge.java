@@ -182,7 +182,7 @@ public class Gauge extends View {
         canvas.drawLine(centerX, 0, centerX, gaugeLength, fixedGaugePaint);
         //Moving gauge
         canvas.drawLine(centerX, 0, centerX + gaugeX, gaugeY, movingGaugePaint);
-        //Semicricle
+        //Semicircle
         canvas.drawArc(semicircleBounds, 0, 180, false, circlePaint);
 
         //Lower note
