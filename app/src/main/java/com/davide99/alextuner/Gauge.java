@@ -80,6 +80,8 @@ public class Gauge extends View {
         lowerNote = "A";
         higherNote = "B#";
         setFrequency(0);
+
+        super.setBackgroundColor(Color.TRANSPARENT);
     }
 
     public Gauge(Context context, @Nullable AttributeSet attrs) {
