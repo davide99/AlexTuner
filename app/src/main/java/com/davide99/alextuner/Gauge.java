@@ -1,5 +1,6 @@
 package com.davide99.alextuner;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -20,7 +21,7 @@ public class Gauge extends View {
     private float circleRadius, centerX;
     private float gaugeX, gaugeY;
     private String note, lowerNote, higherNote;
-    private String frequency;
+    private float frequency;
     private RectF semicircleBounds;
     private Rect textBounds;
 
@@ -79,7 +80,7 @@ public class Gauge extends View {
         note = "A#";
         lowerNote = "A";
         higherNote = "B#";
-        setFrequency(0);
+        setRawFrequency(0);
     }
 
     public Gauge(Context context, @Nullable AttributeSet attrs) {
@@ -120,10 +121,17 @@ public class Gauge extends View {
     private static native float log2(float arg);
 
     public void setFrequency(float frequency) {
-        String new_freq = String.format(Locale.getDefault(), "%.1f", frequency);
+        ValueAnimator frequencyAnimator = ValueAnimator.ofFloat(this.frequency, frequency);
+        frequencyAnimator.setDuration(Consts.MILLIS_FPS);
+        frequencyAnimator.addUpdateListener((ValueAnimator animation) ->
+                setRawFrequency((float) animation.getAnimatedValue())
+        );
+        frequencyAnimator.start();
+    }
 
-        if (!new_freq.equals(this.frequency) && !this.isInEditMode()) {
-            this.frequency = new_freq;
+    private void setRawFrequency(float frequency) {
+        if (Math.abs(this.frequency - frequency) >= 0.1f && !this.isInEditMode()) {
+            this.frequency = frequency;
 
             //Note name
             float note_number = frequency_to_number(frequency);
@@ -197,7 +205,7 @@ public class Gauge extends View {
         canvas.drawText(note, centerX - textBounds.exactCenterX(), textBounds.height() + PADDING, notePaint);
 
         //Frequency
-        String freq = frequency + " Hz";
+        String freq = String.format(Locale.getDefault(), "%.1f", frequency) + " Hz";
         freqPaint.getTextBounds(freq, 0, freq.length(), textBounds);
         canvas.drawText(freq, centerX - textBounds.exactCenterX(), circleRadius - textBounds.height() - PADDING, freqPaint);
     }

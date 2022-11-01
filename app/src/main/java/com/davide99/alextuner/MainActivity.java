@@ -31,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean was_recording = false;
     private Thread recording_thread;
 
-    private static final int FPS = 30;
-    private static final int MILLIS_FPS = (int)(1000.0f / FPS);
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         executor.scheduleAtFixedRate(() ->
                 runOnUiThread(
                         () -> gauge.setFrequency(AudioAnalyzer.getFreq())
-                ), 0, MILLIS_FPS, TimeUnit.MILLISECONDS);
+                ), 0, Consts.MILLIS_FPS, TimeUnit.MILLISECONDS);
 
         binding.notes.setNotes(new String[]{"E2", "A2", "D3", "G3", "B3", "E4"});
         gauge.setListener(binding.notes::setTuned);
