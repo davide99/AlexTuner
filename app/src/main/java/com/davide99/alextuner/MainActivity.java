@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 
 import android.Manifest;
@@ -62,9 +63,8 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-            //Always call getStatusBarHeight before
-            binding.gauge.setPaddingTop(getStatusBarHeight());
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            binding.gauge.setPaddingTop(getStatusBarHeight());
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
