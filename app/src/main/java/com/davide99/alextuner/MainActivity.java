@@ -1,24 +1,21 @@
 package com.davide99.alextuner;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.Window;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.davide99.alextuner.databinding.ActivityMainBinding;
 
@@ -45,15 +42,6 @@ public class MainActivity extends AppCompatActivity {
         if (!permissionToRecordAccepted) finish();
     }
 
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-            binding.gauge.setPaddingTop(getStatusBarHeight());
+
+            ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+                final int statusBar = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+                binding.gauge.setPaddingTop(statusBar);
+                return insets;
+            });
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
