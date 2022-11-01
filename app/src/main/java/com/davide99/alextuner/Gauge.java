@@ -25,10 +25,6 @@ public class Gauge extends View {
     private RectF semicircleBounds;
     private Rect textBounds;
 
-    private static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-    private static final float A4 = 440.0f;
-    private static final float C0 = (float) (A4 * Math.pow(2, -4.75));
-
     private static final int PADDING = 24;
     private static int outOfTuneColor = Color.RED;
     private static int inTuneColor = Color.GREEN;
@@ -95,7 +91,7 @@ public class Gauge extends View {
      * @return note number
      */
     private static float frequency_to_number(float freq) {
-        return Math.round(12.0f * log2(freq / A4) + 69.0);
+        return Math.round(12.0f * log2(freq / Consts.A4) + 69.0);
     }
 
     /**
@@ -105,7 +101,7 @@ public class Gauge extends View {
      * @return frequency
      */
     private static float number_to_frequency(int number) {
-        return (float) (A4 * Math.pow(2, (number - 69) / 12.0));
+        return (float) (Consts.A4 * Math.pow(2, (number - 69) / 12.0));
     }
 
     /**
@@ -115,7 +111,7 @@ public class Gauge extends View {
      * @return index of the note name
      */
     private static int number_to_array_index(int number) {
-        return number % NOTE_NAMES.length;
+        return number % Consts.NOTE_NAMES.length;
     }
 
     private static native float log2(float arg);
@@ -137,11 +133,11 @@ public class Gauge extends View {
             float note_number = frequency_to_number(frequency);
             int nearest_note_number = Math.round(note_number);
             int index = number_to_array_index(nearest_note_number);
-            int octave = (int) log2(frequency / C0);
-            if (index >= 0 && index < NOTE_NAMES.length) {
-                this.note = NOTE_NAMES[index] + octave;
-                this.lowerNote = NOTE_NAMES[(index + NOTE_NAMES.length - 1) % NOTE_NAMES.length];
-                this.higherNote = NOTE_NAMES[(index + 1) % NOTE_NAMES.length];
+            int octave = (int) log2(frequency / Consts.C0);
+            if (index >= 0 && index < Consts.NOTE_NAMES.length) {
+                this.note = Consts.NOTE_NAMES[index] + octave;
+                this.lowerNote = Consts.NOTE_NAMES[(index + Consts.NOTE_NAMES.length - 1) % Consts.NOTE_NAMES.length];
+                this.higherNote = Consts.NOTE_NAMES[(index + 1) % Consts.NOTE_NAMES.length];
             }
 
             //Gauge angle

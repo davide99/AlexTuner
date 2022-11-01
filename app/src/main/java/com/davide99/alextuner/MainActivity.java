@@ -24,9 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String[] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
-    private static final int SAMPLE_RATE = AudioAnalyzer.getSampleRate();
-    private static final int CHUNK_SIZE = AudioAnalyzer.getChunkSize(); //Number of samples
-
     private AudioRecord recorder;
     private boolean was_recording = false;
     private Thread recording_thread;
@@ -62,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
         recorder = new AudioRecord(
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
-                SAMPLE_RATE,
+                Consts.SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                10 * AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
+                10 * AudioRecord.getMinBufferSize(Consts.SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         );
 
         AudioAnalyzer.init();
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         recording_thread = new Thread(() -> {
             recorder.startRecording();
             was_recording = true;
-            short[] data = new short[CHUNK_SIZE];
+            short[] data = new short[Consts.CHUNK_SIZE];
 
             while (!Thread.currentThread().isInterrupted()) {
                 recorder.read(data, 0, data.length);
