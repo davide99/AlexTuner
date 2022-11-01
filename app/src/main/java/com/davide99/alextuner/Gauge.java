@@ -24,7 +24,7 @@ public class Gauge extends View {
     private float frequency;
     private RectF semicircleBounds;
     private Rect textBounds;
-    private int topPadding;
+    private int paddingTop;
 
     private static final int PADDING = 24;
     private static int outOfTuneColor = Color.RED;
@@ -78,11 +78,10 @@ public class Gauge extends View {
         lowerNote = "A";
         higherNote = "B#";
         setRawFrequency(0);
-        topPadding = 0;
     }
 
-    public void setTopPadding(int topPadding) {
-        this.topPadding = topPadding;
+    public void setPaddingTop(int paddingTop) {
+        this.paddingTop = paddingTop;
     }
 
     public Gauge(Context context, @Nullable AttributeSet attrs) {
@@ -188,7 +187,7 @@ public class Gauge extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.translate(0, topPadding);
+        canvas.translate(0, paddingTop);
 
         //Fixed gauge
         canvas.drawLine(centerX, 0, centerX, gaugeLength, fixedGaugePaint);
@@ -217,6 +216,6 @@ public class Gauge extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / 2 + topPadding);
+        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth() / 2 + paddingTop);
     }
 }
