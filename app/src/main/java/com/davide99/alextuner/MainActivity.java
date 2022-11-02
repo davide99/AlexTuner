@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 mlp.rightMargin = insets.right;
                 v.setLayoutParams(mlp);
                 binding.gauge.setPaddingTop(insets.top);
+                binding.notes.setPaddingTop(insets.top);
 
                 return WindowInsetsCompat.CONSUMED;
             });

@@ -25,6 +25,7 @@ public class Notes extends View {
     private Paint notePaintWrong, notePaintOk, textPaint;
     private Rect textBounds;
     private boolean isVertical;
+    private int paddingTop;
     private static int outOfTuneColor = Color.RED;
     private static int inTuneColor = Color.GREEN;
     private static int textColor = Color.WHITE;
@@ -67,6 +68,10 @@ public class Notes extends View {
         init(context, attrs);
     }
 
+    public void setPaddingTop(int paddingTop) {
+        this.paddingTop = paddingTop;
+    }
+
     private void compute_spacing_and_note_size(int view_major_size) {
         int total_spacing = Math.round(view_major_size * 0.1f);
         //Spacing between notes
@@ -94,7 +99,7 @@ public class Notes extends View {
         tuned = new boolean[notes.length];
         Arrays.fill(tuned, false);
         if (isVertical) {
-            recompute_everything(super.getHeight());
+            recompute_everything(super.getHeight() - paddingTop);
         } else {
             recompute_everything(super.getWidth());
         }
@@ -113,7 +118,7 @@ public class Notes extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         if (isVertical) {
-            recompute_everything(h);
+            recompute_everything(h - paddingTop);
         } else {
             recompute_everything(w);
         }
@@ -121,6 +126,9 @@ public class Notes extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (isVertical)
+            canvas.translate(0, paddingTop);
+
         float cy = note_size / 2f;
 
         for (int i = 0; i < notes.length; i++) {
@@ -143,7 +151,7 @@ public class Notes extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (isVertical) {
             compute_spacing_and_note_size(getMeasuredHeight());
-            setMeasuredDimension(note_size, getMeasuredHeight());
+            setMeasuredDimension(note_size, getMeasuredHeight() + paddingTop);
         } else {
             compute_spacing_and_note_size(getMeasuredWidth());
             setMeasuredDimension(getMeasuredWidth(), note_size);
