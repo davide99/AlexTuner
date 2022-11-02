@@ -80,7 +80,6 @@ public class Gauge extends View {
         lowerNote = "A";
         higherNote = "B#";
         setRawFrequency(0);
-        float prevFrequency = 0;
     }
 
     public void setPaddingTop(int paddingTop) {
