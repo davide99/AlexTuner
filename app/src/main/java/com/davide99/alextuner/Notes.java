@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 public class Notes extends View {
     private String[] notes;
-    private boolean[] tuned;
+    private int[] tuned;
     private int spacing;
     private int note_size;
     private Paint notePaintWrong, notePaintOk, textPaint;
@@ -29,6 +29,7 @@ public class Notes extends View {
     private static int outOfTuneColor = Color.RED;
     private static int inTuneColor = Color.GREEN;
     private static int textColor = Color.WHITE;
+    private static final int minimumNumberOfHits = 5;
 
     private void init(Context context, AttributeSet attrs) {
         isVertical = false;
@@ -47,7 +48,7 @@ public class Notes extends View {
         }
 
         notes = new String[]{"E#", "A", "D", "G", "B", "E"};
-        tuned = new boolean[]{false, false, false, false, false, false};
+        tuned = new int[]{0, 0, 0, 0, 0, 0};
 
         notePaintWrong = new Paint(Paint.ANTI_ALIAS_FLAG);
         notePaintWrong.setColor(outOfTuneColor);
@@ -96,8 +97,8 @@ public class Notes extends View {
 
     public void setNotes(@NonNull String[] notes) {
         this.notes = notes;
-        tuned = new boolean[notes.length];
-        Arrays.fill(tuned, false);
+        tuned = new int[notes.length];
+        Arrays.fill(tuned, 0);
         if (isVertical) {
             recompute_everything(super.getHeight() - paddingTop);
         } else {
@@ -108,8 +109,9 @@ public class Notes extends View {
     public void setTuned(String note) {
         for (int i = 0; i < notes.length; i++) {
             if (notes[i].equals(note)) {
-                tuned[i] = true;
-                invalidate();
+                tuned[i]++;
+                if(tuned[i] >= minimumNumberOfHits)
+                    invalidate();
                 break;
             }
         }
@@ -135,7 +137,7 @@ public class Notes extends View {
             float cx = (i + 1) * spacing + (2 * i + 1) * note_size / 2f;
             canvas.drawCircle(
                     isVertical ? cy : cx, isVertical ? cx : cy,
-                    note_size / 2f, tuned[i] ? notePaintOk : notePaintWrong
+                    note_size / 2f, tuned[i] >= minimumNumberOfHits ? notePaintOk : notePaintWrong
             );
             textPaint.getTextBounds(notes[i], 0, notes[i].length(), textBounds);
             canvas.drawText(notes[i],
@@ -175,7 +177,7 @@ public class Notes extends View {
 
 
     static class SavedState extends BaseSavedState {
-        boolean[] tunedState;
+        int[] tunedState;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -183,13 +185,13 @@ public class Notes extends View {
 
         private SavedState(Parcel in) {
             super(in);
-            in.readBooleanArray(tunedState);
+            in.readIntArray(tunedState);
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-            out.writeBooleanArray(tunedState);
+            out.writeIntArray(tunedState);
         }
 
         public static final Parcelable.Creator<SavedState> CREATOR
