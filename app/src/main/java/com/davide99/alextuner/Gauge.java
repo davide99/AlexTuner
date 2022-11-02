@@ -34,6 +34,8 @@ public class Gauge extends View {
 
     private TunedNoteListener listener = null;
 
+    private static final int MAXIMUM_FREQUENCY_CHANGE_RATE = 3;
+
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -78,6 +80,7 @@ public class Gauge extends View {
         lowerNote = "A";
         higherNote = "B#";
         setRawFrequency(0);
+        float prevFrequency = 0;
     }
 
     public void setPaddingTop(int paddingTop) {
@@ -122,12 +125,16 @@ public class Gauge extends View {
     private static native float log2(float arg);
 
     public void setFrequency(float frequency) {
-        ValueAnimator frequencyAnimator = ValueAnimator.ofFloat(this.frequency, frequency);
-        frequencyAnimator.setDuration(Consts.MILLIS_FPS);
-        frequencyAnimator.addUpdateListener((ValueAnimator animation) ->
-                setRawFrequency((float) animation.getAnimatedValue())
-        );
-        frequencyAnimator.start();
+        if (Math.abs(this.frequency - frequency) <= MAXIMUM_FREQUENCY_CHANGE_RATE) {
+            ValueAnimator frequencyAnimator = ValueAnimator.ofFloat(this.frequency, frequency);
+            frequencyAnimator.setDuration(Consts.MILLIS_FPS);
+            frequencyAnimator.addUpdateListener((ValueAnimator animation) ->
+                    setRawFrequency((float) animation.getAnimatedValue())
+            );
+            frequencyAnimator.start();
+        } else {
+            this.frequency = frequency;
+        }
     }
 
     private void setRawFrequency(float frequency) {
