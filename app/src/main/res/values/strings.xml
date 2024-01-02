@@ -5,6 +5,6 @@
     <string name="glo"><b>Gloria Coletta</b> per l\'icona dell\'app</string>
     <string name="felipe"><b>Andrea Felline</b> (<i>Felipe</i>) per il beta-testing</string>
     <string name="github_repo">Questa app è rilasciata sotto licenza <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GNU GPL v2</a>, il codice sorgente è disponibile su <a href="https://github.com/davide99/AlexTuner">github</a>.</string>
-    <string name="fftw_license">L\'app è basata sulla libreria FFTW, rilasciata con licenza <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GNU GPL v2</a> o superiore.</string>
+    <string name="libq_license">L\'app è basata sulla libreria q, rilasciata con licenza <a href="https://raw.githubusercontent.com/cycfi/q/develop/LICENSE">MIT</a> da Joel de Guzman.</string>
     <string name="about_btn">\?</string>
 </resources>

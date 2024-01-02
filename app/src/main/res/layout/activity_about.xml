@@ -123,11 +123,11 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/fftw_license"
+                    android:id="@+id/libq_license"
                     android:layout_column="1"
                     android:layout_span="2"
                     android:paddingTop="8dp"
-                    android:text="@string/fftw_license"
+                    android:text="@string/libq_license"
                     android:textColor="@color/white" />
             </TableRow>
         </TableLayout>

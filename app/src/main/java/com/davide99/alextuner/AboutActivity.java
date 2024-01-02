@@ -25,7 +25,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(new Intent(this, OssLicensesMenuActivity.class))
         );
 
-        binding.fftwLicense.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.libqLicense.setMovementMethod(LinkMovementMethod.getInstance());
         binding.githubRepo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

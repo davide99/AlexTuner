@@ -2,14 +2,10 @@ cmake_minimum_required(VERSION 3.18.1)
 
 project("alextuner")
 
-set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(ENABLE_FLOAT ON)
-set(BUILD_SHARED_LIBS OFF)
-set(BUILD_TESTS OFF)
-set(DISABLE_FORTRAN ON)
-set(ENABLE_THREADS ON)
-add_subdirectory(fftw-3.3.10)
+add_subdirectory(q_lib)
 
 add_library(
         alextuner
@@ -19,10 +15,10 @@ add_library(
 
 find_library(log-lib log)
 
-target_include_directories(alextuner PRIVATE fftw-3.3.10/api)
+target_include_directories(alextuner PRIVATE libq)
 
 target_link_libraries(
         alextuner
-        fftw3f
-        fftw3f_threads
+        libq
+        log
 )

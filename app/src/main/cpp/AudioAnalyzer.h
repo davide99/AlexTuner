@@ -1,34 +1,30 @@
 #ifndef AUDIOANALYZER_H
 #define AUDIOANALYZER_H
 
-#include "CircularBuffer.h"
-#include <memory>
-#include <fftw3.h>
-#include <atomic>
+#include <cstdint>
+#include <q/pitch/pitch_detector.hpp>
+
+namespace q = cycfi::q;
 
 class AudioAnalyzer {
-private:
-    CircularBuffer<std::int16_t> buffer;
-    std::unique_ptr<float[]> window;
-    std::unique_ptr<float[]> fft_input;
-    fftwf_plan fft_plan;
-    std::unique_ptr<fftwf_complex[]> fft_out;
-    std::unique_ptr<float[]> fft_out_magnitude;
-    std::unique_ptr<float[]> fft_out_magnitude_copy;
-    float freq;
+public:
+    static constexpr auto SAMPLE_RATE = 44100.0f;
+    static constexpr auto LOWEST_FREQ = 60.0f;
+    static constexpr auto HIGHEST_FREQ = 500.0f;
+    static constexpr auto HYSTERESIS_DB = -45.0f;
+    static constexpr auto CHUNK_SIZE = 256;
 
+private:
+    q::pitch_detector pd{LOWEST_FREQ, HIGHEST_FREQ, SAMPLE_RATE, HYSTERESIS_DB};
 
 public:
-    AudioAnalyzer();
-    ~AudioAnalyzer();
+    AudioAnalyzer() = default;
+
+    ~AudioAnalyzer() = default;
 
     void feed_data(short *data, size_t length);
 
     float get_freq() const;
-
-    static int get_sample_rate();
-
-    static int get_chunk_size();
 };
 
 #endif //AUDIOANALYZER_H
