@@ -36,12 +36,14 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeRecorderAndStartThread(binding);
+                initializeRecorderAndStartThread();
             } else {
                 Toast.makeText(this, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
                 finishAffinity();
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         } else {
-            initializeRecorderAndStartThread(binding);
+            initializeRecorderAndStartThread();
         }
 
         binding.aboutButton.setOnClickListener((View v) -> {
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeRecorderAndStartThread(ActivityMainBinding binding) {
+    private void initializeRecorderAndStartThread() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
