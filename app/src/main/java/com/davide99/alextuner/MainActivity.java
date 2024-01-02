@@ -9,6 +9,7 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,27 +33,31 @@ public class MainActivity extends AppCompatActivity {
     private AudioRecord recorder;
     private boolean was_recording = false;
     private Thread recording_thread;
+    private ActivityMainBinding binding;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean permissionToRecordAccepted = false;
 
-        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION)
-            permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-
-        if (!permissionToRecordAccepted) finish();
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initializeRecorderAndStartThread(binding);
+            } else {
+                Toast.makeText(this, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
+                finishAffinity();
+            }
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, windowInsets) -> {
@@ -70,14 +75,22 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
+        } else {
+            initializeRecorderAndStartThread(binding);
+        }
 
         binding.aboutButton.setOnClickListener((View v) -> {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             MainActivity.this.startActivity(intent);
         });
+    }
+
+    private void initializeRecorderAndStartThread(ActivityMainBinding binding) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
 
         recorder = new AudioRecord(
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
@@ -87,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 10 * AudioRecord.getMinBufferSize(Consts.SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         );
 
-        AudioAnalyzer.init();
+        if (!AudioAnalyzer.init())
+            return;
 
         recording_thread = new Thread(() -> {
             recorder.startRecording();
