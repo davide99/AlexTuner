@@ -8,19 +8,15 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.davide99.alextuner.databinding.ActivityMainBinding;
+import com.davide99.alextuner.utils.LifeCycleUtils;
 import com.davide99.alextuner.utils.PermissionsManager;
+import com.davide99.alextuner.utils.StyleUtils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,33 +35,17 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-            ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, windowInsets) -> {
-                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-
-                ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-                mlp.leftMargin = insets.left;
-                mlp.bottomMargin = insets.bottom;
-                mlp.rightMargin = insets.right;
-                v.setLayoutParams(mlp);
-                binding.gauge.setPaddingTop(insets.top);
-                binding.notes.setPaddingTop(insets.top);
-
-                return WindowInsetsCompat.CONSUMED;
-            });
-        }
+        StyleUtils.setDarkMode();
+        StyleUtils.useTransparentStatusBarAndThen(this, binding.getRoot(), insets -> {
+            binding.gauge.setPaddingTop(insets.top);
+            binding.notes.setPaddingTop(insets.top);
+        });
 
         permissionsManager = new PermissionsManager(
                 this,
                 this::initializeRecorderAndStartThread,
-                () -> {
-                    Toast.makeText(MainActivity.this, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
-                    finishAffinity();
-                },
+                () -> LifeCycleUtils.showToastAndExit(this),
                 Manifest.permission.RECORD_AUDIO
         );
 
