@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     private void initializeRecorderAndStartThread() {
         recorder = new AudioRecord(
-                MediaRecorder.AudioSource.VOICE_RECOGNITION,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ?
+                        MediaRecorder.AudioSource.UNPROCESSED : MediaRecorder.AudioSource.DEFAULT,
                 Consts.SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
@@ -96,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
         Gauge gauge = binding.gauge;
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() ->
-                runOnUiThread(
-                        () -> gauge.setFrequency(AudioAnalyzer.getFreq())
-                ),
+                        runOnUiThread(
+                                () -> gauge.setFrequency(AudioAnalyzer.getFreq())
+                        ),
                 0, Consts.MILLIS_FPS, TimeUnit.MILLISECONDS
         );
 
