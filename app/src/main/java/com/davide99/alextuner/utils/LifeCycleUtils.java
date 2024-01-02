@@ -5,8 +5,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LifeCycleUtils {
-    public static void showToastAndExit(AppCompatActivity activity) {
-        Toast.makeText(activity, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
+    public static void showToastAndExit(AppCompatActivity activity, String message) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
         activity.finishAffinity();
     }
 }

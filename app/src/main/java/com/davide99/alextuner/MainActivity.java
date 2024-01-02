@@ -8,7 +8,6 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private AudioRecord recorder;
-    private boolean was_recording = false;
+    private boolean was_recording;
     private Thread recording_thread;
     private ActivityMainBinding binding;
     private PermissionsManager permissionsManager;
@@ -42,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
             binding.notes.setPaddingTop(insets.top);
         });
 
+        was_recording = false;
+
         permissionsManager = new PermissionsManager(
                 this,
                 this::initializeRecorderAndStartThread,
-                () -> LifeCycleUtils.showToastAndExit(this),
+                () -> LifeCycleUtils.showToastAndExit(this, "Permesso non concesso, esco"),
                 Manifest.permission.RECORD_AUDIO
         );
 
@@ -58,7 +59,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -93,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
         executor.scheduleAtFixedRate(() ->
                 runOnUiThread(
                         () -> gauge.setFrequency(AudioAnalyzer.getFreq())
-                ), 0, Consts.MILLIS_FPS, TimeUnit.MILLISECONDS);
+                ),
+                0, Consts.MILLIS_FPS, TimeUnit.MILLISECONDS
+        );
 
         binding.notes.setNotes(new String[]{"E2", "A2", "D3", "G3", "B3", "E4"});
         gauge.setListener(binding.notes::setTuned);
