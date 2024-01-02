@@ -1,8 +1,8 @@
 package com.davide99.alextuner;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -14,42 +14,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.davide99.alextuner.databinding.ActivityMainBinding;
+import com.davide99.alextuner.utils.PermissionsManager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String[] permissions = {Manifest.permission.RECORD_AUDIO};
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-
     private AudioRecord recorder;
     private boolean was_recording = false;
     private Thread recording_thread;
     private ActivityMainBinding binding;
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeRecorderAndStartThread();
-            } else {
-                Toast.makeText(this, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
-                finishAffinity();
-            }
-        }
-    }
+    private PermissionsManager permissionsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +59,17 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-        } else {
-            initializeRecorderAndStartThread();
-        }
+        permissionsManager = new PermissionsManager(
+                this,
+                this::initializeRecorderAndStartThread,
+                () -> {
+                    Toast.makeText(MainActivity.this, "Permesso non concesso, esco", Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                },
+                Manifest.permission.RECORD_AUDIO
+        );
+
+        permissionsManager.requestPermissions();
 
         binding.aboutButton.setOnClickListener((View v) -> {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -89,11 +77,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeRecorderAndStartThread() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
+    @SuppressLint("MissingPermission")
+    private void initializeRecorderAndStartThread() {
         recorder = new AudioRecord(
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
                 Consts.SAMPLE_RATE,
