@@ -13,12 +13,9 @@ add_library(
         AudioAnalyzer.cpp
         jni_bridge.cpp)
 
-find_library(log-lib log)
-
 target_include_directories(alextuner PRIVATE libq)
 
 target_link_libraries(
         alextuner
         libq
-        log
 )
